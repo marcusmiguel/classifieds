@@ -1,4 +1,22 @@
-# classifieds
+`%classifieds`
+===
+A peer-to-peer "Craigslist"-like marketplace app for you, your `%pals`,  and your `%pals`' `%pals`.
+
+
+The `%classifieds` app sets up a peer-to-peer "Craigslist"-like marketplace using the contacts from the `%pals` app.  Peers can send, receive and forwards each other's ads - similar to how "rumors" spread via the `%rumors`  app by ~paldev (see [here](https://github.com/Fang-/suite)).
+
+**Basic functionality:**
+* Peers broadcast their ads for various items to their `%pals`.
+* Peers forward ads they receive from one of their `%pals`. (Forwarding is done at most once per ad per peer, i.e. `A` broadcasts to `B` who forwards to `C`. However, `C` does not forward to `D`. Ad Forwarding can be turned off by any peer.)
+* Peers can browse ads that they have received directly from their `%pals` or that have been forwarded to them.
+
+
+
+
+**Example:**
+
+Alice wants to sell her guitar and broadcast her ad to her `%pals` contacts among whom is Bob. Bob is not interested in buying the guitar but his ship automatically forwards Alice's ad to Charlie who can set up a connection to Alice via Bob. Alice can also browse the offers by Bob and his direct `%pals`.
+
 
 ### Getting Started
 
