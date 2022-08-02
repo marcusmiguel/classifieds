@@ -1,5 +1,22 @@
 # classifieds
 
+### Installing the Desk From Source
+create and mount the desk:
+```
+|merge %classifieds our %webterm
+|mount %classifieds
+```
+copy the files to the mounted desk:
+```
+cd <mounted_classifieds_desk>
+rm -r ./*
+cp -rL <(this_repo)/desk/* .
+```
+commit and install:
+```
+|commit %classifieds
+|install our %classifieds
+```
 ### Getting Started
 
 To get started using classifieds first you need to run `npm install` inside the `ui` directory.
@@ -28,8 +45,3 @@ To deploy, run `npm run build` in the `ui` directory which will bundle all the c
 ```
 
 11. This can now be safely committed and deployed.
-
-[react]: https://reactjs.org/
-[typescript]: https://www.typescriptlang.org/
-[tailwind css]: https://tailwindcss.com/
-[vite]: https://vitejs.dev/

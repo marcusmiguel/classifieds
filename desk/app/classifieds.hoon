@@ -1,19 +1,19 @@
 /-  *classifieds
-/+   gossip, default-agent, dbug
+/+  gossip, default-agent, dbug
 ::
-/$  grab-ad  %noun  %classifieds-advertisements
+/$  grab-ad  %noun  %classifieds-advertisement
+/$  grab-ads  %noun  %classifieds-advertisements
 ::
-|%
+|% 
 +$  versioned-state
   $%  state-0
+  ==  
++$  state-0
+  $:  %0
+      ads=(map ship advertisements)
+      myads=advertisements
   ==
-+$  state-0  $:  %0
-                 ads=advertisements
-                 myads=advertisements
-                 :: TODO: Add saved ads functionality
-                 :: TODO: We need a way to tell the others ships that we wiped our ads(via |nuke %classifieds).
-             ==     
-::
+::   
 +$  eyre-id  @ta
 +$  card  card:agent:gall
 --
@@ -21,10 +21,12 @@
 =|  state-0
 =*  state  -
 %-  %+  agent:gossip
-      [1 %anybody %anybody]
-    %+  ~(put by *(map mark $-(* vase)))
-      %classifieds-advertisements
-    |=(n=* !>((grab-ad n)))
+      [1 %mutuals %mutuals]
+    %-  malt
+    ^-  (list [mark $-(* vase)])
+    :~  [%classifieds-advertisement |=(n=* !>((grab-ad n)))]
+        [%classifieds-advertisements |=(n=* !>((grab-ads n)))]
+    ==
 ::
 %-  agent:dbug
 ^-  agent:gall
@@ -45,7 +47,6 @@
   |=  old-state=vase
   ^-  (quip card _this)
   =/  old  !<(versioned-state old-state)
-  ~&  old
   ?-  -.old
     %0  `this(state old)
   ==
@@ -62,12 +63,12 @@
         ::
         :: TODO: Validate title/desc lenght
         ::
-        =/  ad  [publisher=our.bowl date=now.bowl title=title.act desc=desc.act]
+        =/  ad  [our.bowl now.bowl title.act desc.act]
         :_  this(myads (weld myads ~[ad])) 
-        [(invent:gossip %classifieds-advertisements !>(`advertisements`~[ad]))]~
-        ::
-        :: TODO: Add delete-ad use case
-        ::
+        [(invent:gossip %classifieds-advertisement !>(ad))]~
+      ::
+      :: TODO: Add delete-ad use case
+      ::
       ==
   ==
 ::
@@ -88,26 +89,32 @@
   ?.  =(/~/gossip/source path)
     (on-watch:def path)
   :_  this
-  [%give %fact ~ %classifieds-advertisements !>(`advertisements`myads)]~
+  [%give %fact ~ %classifieds-advertisements !>([now.bowl myads])]~
 ::
 ++  on-peek 
   |=  =path
   ^-  (unit (unit cage))
   ?+  path  (on-peek:def path)
     [%x %classifieds-advertisements %all ~]
-    ``json+!>(myads)
+    ``json+!>([now.bowl myads])
   ==
+::
 ++  on-agent
   |=  [=wire =sign:agent:gall]
   ?.  ?&  =(/~/gossip/gossip wire)
           ?=(%fact -.sign)
-          =(%classifieds-advertisements p.cage.sign)
       ==
-    ~&  [dap.bowl %strange-sign wire sign]
     (on-agent:def wire sign)
-  =/  newads  !<(advertisements q.cage.sign)
-  `this(ads (weld ads newads))  
-::
+  ?+  p.cage.sign  (on-agent:def wire sign)
+    %classifieds-advertisements
+      =/  newads  !<(advertisements-payload q.cage.sign)
+      `this(ads (~(gas by ads) ~[[src.bowl +.newads]]))
+    %classifieds-advertisement
+      =/  newad  !<(advertisement q.cage.sign)
+      =/  newlist  (weld (~(got by ads) src.bowl) [newad ~])
+      `this(ads (~(gas by ads) ~[[src.bowl newlist]]))
+  ==
+::  
 ++  on-fail   on-fail:def
 ++  on-leave  on-leave:def
 --

@@ -1,6 +1,6 @@
 :~
   title+'classifieds'
-  info+'An Urbit app that does great things'
+  info+'A peer-to-peer marketplace.'
   color+0x2e.4347
   version+[0 0 1]
   website+''

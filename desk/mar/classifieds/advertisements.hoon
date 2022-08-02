@@ -1,8 +1,8 @@
 /-  classifieds
-|_  ads=advertisements:classifieds
+|_  ads=advertisements-payload:classifieds
 ++  grab
   |%
-  ++  noun  advertisements:classifieds
+  ++  noun  advertisements-payload:classifieds
   --
 ++  grow
   |%

@@ -7,7 +7,7 @@
   ++  json
     |=  jon=^json
     %-  action:classifieds
-    =<  (client-action jon)
+    =<  (client-action jon)  
     |% 
     ++  client-action
         %-  of:dejs
