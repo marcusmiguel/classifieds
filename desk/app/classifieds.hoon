@@ -2,17 +2,13 @@
 /+  gossip, default-agent, dbug
 ::
 /$  grab-ad  %noun  %classifieds-advertisement
-/$  grab-ads  %noun  %classifieds-advertisements
+/$  grab-initial-ads  %noun  %classifieds-initial-ads
+/$  grab-state  %noun  %classifieds-state
 ::
-|% 
+|%  
 +$  versioned-state
   $%  state-0
   ==  
-+$  state-0
-  $:  %0
-      ads=(map ship advertisements)
-      myads=advertisements
-  ==
 ::   
 +$  eyre-id  @ta
 +$  card  card:agent:gall
@@ -25,7 +21,8 @@
     %-  malt
     ^-  (list [mark $-(* vase)])
     :~  [%classifieds-advertisement |=(n=* !>((grab-ad n)))]
-        [%classifieds-advertisements |=(n=* !>((grab-ads n)))]
+        [%classifieds-initial-ads |=(n=* !>((grab-initial-ads n)))]
+        [%classifieds-state |=(n=* !>((grab-state n)))]
     ==
 ::
 %-  agent:dbug
@@ -89,14 +86,14 @@
   ?.  =(/~/gossip/source path)
     (on-watch:def path)
   :_  this
-  [%give %fact ~ %classifieds-advertisements !>([now.bowl myads])]~
+  [%give %fact ~ %classifieds-initial-ads !>([now.bowl myads])]~
 ::
 ++  on-peek 
   |=  =path
   ^-  (unit (unit cage))
   ?+  path  (on-peek:def path)
-    [%x %classifieds-advertisements %all ~]
-    ``json+!>([now.bowl myads])
+    [%x %state ~]
+    ``classifieds-state+!>(state)
   ==
 ::
 ++  on-agent
@@ -106,8 +103,8 @@
       ==
     (on-agent:def wire sign)
   ?+  p.cage.sign  (on-agent:def wire sign)
-    %classifieds-advertisements
-      =/  newads  !<(advertisements-payload q.cage.sign)
+    %classifieds-initial-ads
+      =/  newads  !<(initial-ads q.cage.sign)
       `this(ads (~(gas by ads) ~[[src.bowl +.newads]]))
     %classifieds-advertisement
       =/  newad  !<(advertisement q.cage.sign)

@@ -1,47 +1,23 @@
-import React, { useEffect, useState } from 'react';
-import Urbit from '@urbit/http-api';
+import React, { useEffect } from 'react';
+import { Router, Routes, Route, BrowserRouter } from 'react-router-dom';
 // import { Charges, ChargeUpdateInitial, scryCharges } from '@urbit/api';
-
-const api = new Urbit('', '', window.desk);
-api.ship = window.ship;
+import { Home } from './pages/'
+import { useAppDispatch, useAppSelector } from './redux/hooks/hooks';
+import { loadAds } from './redux/slices/advertisementsSlice';
 
 export function App() {
-  const [formValues, setFormValues] = useState({ title: '', desc: '' });
+  const dispatch = useAppDispatch();
 
-  const handleButtonClick = () => {
-    api.poke(
-      {
-        app: 'classifieds',
-        mark: 'classifieds-action',
-        json: { 'pub-advertisement': { 'title': formValues.title, 'desc': formValues.desc } },
-      }
-    );
-    setFormValues({ title: '', desc: '' });
-  };
-
-  const handleChange = (e) => {
-    const { placeholder, value } = e.target;
-    setFormValues({ ...formValues, [placeholder]: value });
-  };
+  useEffect(() => {
+    dispatch(loadAds());
+    document.body.style.overflowX = "hidden";
+  }, []);
 
   return (
-    <main className="flex items-center justify-center min-h-screen">
-      <div className="max-w-md space-y-6 py-20">
-        <h1 className="text-3xl font-bold">Welcome to classifieds</h1>
-        <input
-          placeholder="title"
-          onChange={handleChange}
-          type="text"
-          value={formValues.title}
-        />
-        <input
-          placeholder="desc"
-          onChange={handleChange}
-          type="text"
-          value={formValues.desc}
-        />
-        <button onClick={handleButtonClick}>Poke agent!</button>
-      </div>
-    </main>
+    <BrowserRouter basename='/apps/classifieds'>
+      <Routes>
+        <Route path="/" element={<Home />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
