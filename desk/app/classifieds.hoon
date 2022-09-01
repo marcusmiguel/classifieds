@@ -63,7 +63,7 @@
         ::
         :: TODO: Validate title/desc lenght
         ::
-        =/  ad  [our.bowl now.bowl title.act desc.act]
+        =/  ad  [our.bowl (sham eny.bowl) now.bowl forward.act title.act desc.act price.act img-uris.act]
         :_  this(myads (weld myads ~[ad])) 
         [(invent:gossip %classifieds-advertisement !>(ad))]~
       ::
