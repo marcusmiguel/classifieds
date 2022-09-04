@@ -2,28 +2,26 @@ import { reactRenderer, sigil } from "@tlon/sigil-js";
 import moment from "moment";
 import React, { useEffect, useRef, useState } from "react";
 import api from "../../api";
-import { Advertisement, Reply, Comment, TabContent } from "../../types";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks/hooks";
+import { toggleFavorite } from "../../redux/slices/advertisementsSlice";
+import { Advertisement, TabContent } from "../../types";
 import { daToDate } from "../../util";
 import { ConfirmModal } from "../ConfirmModal/ConfirmModal";
 import { ForwardModal } from "../ForwardModal/ForwardModal";
 import { Desc, DetailsContainer, Publisher, Title, Image, Date, FavButton, FavIcon, ForwardButton, ForwardIcon, Actions, DeleteButton, DeleteIcon, Price, InfoRow, FirstSection, CloseIcon, PriceContainer, SourceContainer, PriceLabel, PublisherInfo, SecondaryImageColumn, SecondaryImage, UpperRow, Tags, Tag, ImageColumn, InfoColumn, InfoBox, ChatButton, ChatIcon, FavIconClicked, Conversation, ConversationUpperRow, ConversationReceiver, ConversationReceiverShip, ConversationAdTitle, MessageList, SentMessage, MessageText, MessageDate, ReceivedMessage, SigilContainer, ReceivedMessageBox, ConversationBottomRow, Input, InputRow, SendIcon, NavigatedIcon } from "./style";
 
 interface DetailsProps {
-    ad: Advertisement
+    advertisement: Advertisement,
     setAd: Function,
-    handleFavButtonClick: Function,
-    favorites: Advertisement[],
     contentToShow: string
 }
 
-export const Details = ({ ad, setAd, handleFavButtonClick, favorites, contentToShow }: DetailsProps) => {
+export const Details = ({ advertisement, setAd, contentToShow }: DetailsProps) => {
 
-    const formatedDate = daToDate(ad!.date!).fromNow();
-
-    const [isFavorited, setIsFavorited] = useState(false);
     const [displayChat, setDisplayChat] = useState(false);
     const [displayConfirmModal, setDisplayConfirmModal] = useState(false);
     const [displayForwardModal, setDisplayForwardModal] = useState(false);
+    const dispatch = useAppDispatch();
 
     const [hardCodedChat, setHardCodedChat] = useState({
         ship: '~fidwed-sipwyn',
@@ -32,24 +30,18 @@ export const Details = ({ ad, setAd, handleFavButtonClick, favorites, contentToS
         , adTitle: 'myad2'
     });
 
-    const [mainImage, setMainImage] = useState<string>('https://picsum.photos/200');
-    const [secondaryImages, setSecondaryImages] = useState<string[]>(['https://picsum.photos/200', 'https://picsum.photos/200', 'https://picsum.photos/200'])
+    const [mainImage, setMainImage] = useState<string>(advertisement.images[0]);
+    const [secondaryImages, setSecondaryImages] = useState<string[]>([...advertisement.images.slice(1)])
 
     useEffect(() => {
         document.body.style.overflow = "hidden";
-        if (favorites.includes(ad)) {
-            setIsFavorited(true)
-        }
-
-        setMainImage('https://picsum.photos/200')
-        setSecondaryImages(['https://picsum.photos/200', 'https://picsum.photos/200', 'https://picsum.photos/200'])
 
         document.addEventListener(
             "click",
             function (event) {
                 var clicked = event.target as Element;
-                var chat = document.getElementById('detailsConversation')
-                var chatButton = document.getElementById('detailsChatButton')
+                var chat = document.getElementById('detailsConversation');
+                var chatButton = document.getElementById('detailsChatButton');
 
                 if (
                     clicked != chat && !chat?.contains(clicked) && clicked != chatButton && !chatButton?.contains(clicked)
@@ -61,14 +53,6 @@ export const Details = ({ ad, setAd, handleFavButtonClick, favorites, contentToS
         )
     }, []);
 
-    useEffect(() => {
-        if (favorites.includes(ad)) {
-            setIsFavorited(true)
-        } else {
-            setIsFavorited(false)
-        }
-    }, [favorites]);
-
     const handleDetailsClose = () => {
         setAd();
         document.body.style.overflowY = "scroll";
@@ -77,6 +61,7 @@ export const Details = ({ ad, setAd, handleFavButtonClick, favorites, contentToS
 
     const handleDeleteModalConfirm = () => {
         // poke the agent
+
         setDisplayConfirmModal(false);
     };
 
@@ -121,18 +106,22 @@ export const Details = ({ ad, setAd, handleFavButtonClick, favorites, contentToS
             </UpperRow>
             <FirstSection>
                 <ImageColumn >
-                    <Image src={mainImage} ></Image>
+                    {mainImage ?
+                        <Image src={mainImage} />
+                        :
+                        <Image src={'/apps/classifieds/assets/placeholder.png'} />
+                    }
                     <SecondaryImageColumn>
-                        <SecondaryImage src={secondaryImages[0]} data-value={secondaryImages[0]} onClick={handleImageClick} />
-                        <SecondaryImage src={secondaryImages[1]} data-value={secondaryImages[1]} onClick={handleImageClick} />
-                        <SecondaryImage src={secondaryImages[2]} data-value={secondaryImages[2]} onClick={handleImageClick} />
+                        {secondaryImages[0] && <SecondaryImage src={secondaryImages[0]} data-value={secondaryImages[0]} onClick={handleImageClick} />}
+                        {secondaryImages[1] && <SecondaryImage src={secondaryImages[1]} data-value={secondaryImages[1]} onClick={handleImageClick} />}
+                        {secondaryImages[2] && <SecondaryImage src={secondaryImages[2]} data-value={secondaryImages[2]} onClick={handleImageClick} />}
                     </SecondaryImageColumn>
                 </ImageColumn>
                 <InfoColumn>
                     <InfoBox>
-                        <Title>{ad?.title}
+                        <Title>{advertisement?.title}
                         </Title>
-                        <Desc>{ad?.desc}</Desc>
+                        <Desc>{advertisement?.desc}</Desc>
                         <InfoRow>
                             <PriceContainer>
                                 <PriceLabel>
@@ -151,18 +140,18 @@ export const Details = ({ ad, setAd, handleFavButtonClick, favorites, contentToS
                                         })
                                     }
                                     <Publisher>
-                                        {ad?.publisher == ('~' + api.ship!) ? 'You' : ad?.publisher}
+                                        {advertisement?.ship == ('~' + api.ship!) ? 'You' : advertisement?.ship}
                                     </Publisher>
                                 </PublisherInfo>
-                                <Date>{formatedDate}</Date>
+                                <Date>{daToDate(advertisement!.date!).fromNow()}</Date>
                             </SourceContainer>
                         </InfoRow>
                     </InfoBox>
                     <Actions>
                         {contentToShow == TabContent[TabContent.theirAds] ?
                             <>
-                                <FavButton isFavorited={isFavorited} onClick={() => handleFavButtonClick(ad)} >
-                                    {isFavorited ? <><FavIconClicked />Favorited</> : <><FavIcon />Favorite</>}
+                                <FavButton isFavorited={advertisement.isFavorited} onClick={() => dispatch(toggleFavorite({ id: advertisement.id }))} >
+                                    {advertisement.isFavorited ? <><FavIconClicked />Favorited</> : <><FavIcon />Favorite</>}
                                 </FavButton>
                                 <ForwardButton onClick={() => setDisplayForwardModal(true)}>
                                     <ForwardIcon />Forward
@@ -180,7 +169,7 @@ export const Details = ({ ad, setAd, handleFavButtonClick, favorites, contentToS
                             <ConfirmModal onConfirmFunction={handleDeleteModalConfirm} onCancelFunction={() => setDisplayConfirmModal(false)} Message={"Are you sure?"} />
                         }
                         {displayForwardModal &&
-                            <ForwardModal ad={ad} setDisplayForwardModal={setDisplayForwardModal}></ForwardModal>
+                            <ForwardModal advertisement={advertisement} setDisplayForwardModal={setDisplayForwardModal}></ForwardModal>
                         }
                     </Actions>
                     {displayChat && <Conversation id="detailsConversation">
@@ -195,10 +184,10 @@ export const Details = ({ ad, setAd, handleFavButtonClick, favorites, contentToS
                                     })
                                 }
                                 <ConversationReceiverShip>
-                                    {ad.publisher}
+                                    {advertisement.ship}
                                 </ConversationReceiverShip>
                             </ConversationReceiver>
-                            <ConversationAdTitle>{ad.title}</ConversationAdTitle>
+                            <ConversationAdTitle>{advertisement.title}</ConversationAdTitle>
                         </ConversationUpperRow>
                         <MessageList id='detailsMessageList'>
                             {hardCodedChat.msgs.map((msg, index) =>

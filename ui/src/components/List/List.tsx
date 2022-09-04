@@ -7,6 +7,8 @@ import { Pagination } from "../Pagination/Pagination";
 import { Dropdown, DropdownIcon, DropdownModal, DropdownOption, DropdownText, FilterUpperRow, ListContainer, ListGrid, NotificationButton, NotificationIcon, SearchBar, SearchContainer, SearchIcon, ShipName, Tag, Tags, Title, Unread, UpperRow, UserInfo, UserInfoContainer, } from './style';
 import { NotificationsModal } from "../NotificationsModal/NotificationsModal";
 import moment from "moment";
+import { useAppDispatch, useAppSelector } from '../../redux/hooks/hooks';
+import api from "../../api";
 
 interface ListProps {
     ads: Advertisement[] | null,
@@ -15,22 +17,33 @@ interface ListProps {
 
 export const List = ({ ads, contentToShow }: ListProps) => {
     const [currentAds, setCurrentAds] = useState<Advertisement[]>([]);
-    const [favoriteAds, setFavoriteAds] = useState<Advertisement[]>([]);
     const [forwardedAds, setForwardedAds] = useState<Advertisement[]>([]);
+    const { favorites } = useAppSelector((state) => state.advertisements.advertisements);
 
-    const [adToShow, setAdToShow] = useState();
+    const [adToShow, setAdToShow] = useState<Advertisement>();
     const [adsQuery, setQuery] = useState('');
     const [debouncedAdsQuery, setDebouncedAdsQuery] = useState(adsQuery);
-    const [queriedAds, setQueriedAds] = useState(ads);
+    const [queriedAds, setQueriedAds] = useState<Advertisement[]>([]);
+
+    useEffect(() => {
+        if (ads) {
+            setQueriedAds(ads)
+        }
+        console.log(ads)
+    }, [ads]);
+
+    useEffect(() => {
+        setAdToShowById(adToShow?.id)
+    }, [favorites]);
 
     const [dropdownContent, setDropdownContent] = useState('All');
     const [displayDropdownModal, setDisplayDropdownModal] = useState(false);
 
     const [displayNotifications, setDisplayNotifications] = useState(false);
 
-    let hardcodedNotifications: Notification[] = []
-    if (ads) {
-        hardcodedNotifications = [{ author: '~harlys-forbec', text: NotificationMessages.newForwardedAd, date: moment!.utc()!.format(), ad: ads[0] }, { author: '~fidwed-sipwyn', text: NotificationMessages.newMessage, date: moment!.utc()!.format(), ad: ads[1] }]
+    let hardcodedNotifications: Notification[] = [];
+    if (ads && ads != null && ads?.length > 1) {
+        hardcodedNotifications = [{ ship: '~harlys-forbec', text: NotificationMessages.newForwardedAd, date: moment!.utc()!.format(), advertisementId: ads[0].id }, { ship: '~fidwed-sipwyn', text: NotificationMessages.newMessage, date: moment!.utc()!.format(), advertisementId: ads[1].id }]
     }
     const [unreadNotifications, setUnreadNotifications] = useState(hardcodedNotifications);
 
@@ -47,6 +60,11 @@ export const List = ({ ads, contentToShow }: ListProps) => {
         setDebouncedAdsQuery(value);
     };
 
+    const setAdToShowById = (id) => {
+        let ad = ads?.filter(x => x.id == id)!;
+        setAdToShow(ad[0]);
+    }
+
     useEffect(() => {
         const timer = setTimeout(() => setQuery(debouncedAdsQuery), 300);
         return () => clearTimeout(timer);
@@ -54,12 +72,12 @@ export const List = ({ ads, contentToShow }: ListProps) => {
 
     useEffect(() => {
         let queryIsEmpty = adsQuery.trim().length == 0;
-        if (ads == null) return;
+        if (ads == null || ads?.length == 0) return;
 
         let newAds = [...ads];
 
-        if (dropdownContent == 'Favorites') {
-            newAds = favoriteAds;
+        if (dropdownContent == 'Favorites' && favorites) {
+            newAds = ads?.filter(x => x.isFavorited);
         }
         if (dropdownContent == 'Forwarded') {
             newAds = forwardedAds;
@@ -68,22 +86,11 @@ export const List = ({ ads, contentToShow }: ListProps) => {
         queryIsEmpty ?
             setQueriedAds(newAds)
             :
-            setQueriedAds(newAds?.filter(x => x.title.toLowerCase().includes(adsQuery.toLowerCase()) || x.publisher.toLowerCase().includes(adsQuery.toLowerCase()) || x.desc.toLowerCase().includes(adsQuery.toLowerCase())))
+            setQueriedAds(newAds?.filter(x => x.title.toLowerCase().includes(adsQuery.toLowerCase()) || x.ship.toLowerCase().includes(adsQuery.toLowerCase()) || x.desc.toLowerCase().includes(adsQuery.toLowerCase())))
     }, [adsQuery, dropdownContent])
 
     const handleNotificationsButtonClick = (e) => {
         setDisplayNotifications(!displayNotifications);
-    };
-
-    const handleFavButtonClick = (ad) => {
-        if (!favoriteAds.includes(ad)) {
-            setFavoriteAds([...favoriteAds, ad])
-        }
-        else {
-            let favoritesCopy = [...favoriteAds]
-            let newFavorites = favoritesCopy.filter(x => x.publisher != ad.publisher && x.title != ad.title);
-            setFavoriteAds(newFavorites)
-        }
     };
 
     useEffect(() => {
@@ -122,15 +129,15 @@ export const List = ({ ads, contentToShow }: ListProps) => {
                     <UserInfo>
                         {
                             sigil({
-                                patp: 'fidwed-sipwyn',
+                                patp: api.ship!,
                                 renderer: reactRenderer,
                                 size: 20,
                                 colors: ['white', 'black'],
                             })
                         }
-                        <ShipName>~fidwed-sipwyn</ShipName>
+                        <ShipName>{api.ship}</ShipName>
                     </UserInfo>
-                    {displayNotifications && <NotificationsModal notifications={unreadNotifications} setDisplayNotifications={setDisplayNotifications} setAdToShow={setAdToShow} setNotifications={setUnreadNotifications}></NotificationsModal>}
+                    {displayNotifications && <NotificationsModal notifications={unreadNotifications} setDisplayNotifications={setDisplayNotifications} setAdToShowById={setAdToShowById} setNotifications={setUnreadNotifications}></NotificationsModal>}
                 </UserInfoContainer>
             </UpperRow>{
                 (contentToShow == TabContent[TabContent.theirAds]) &&
@@ -153,7 +160,7 @@ export const List = ({ ads, contentToShow }: ListProps) => {
 
     return (
         <>
-            {adToShow && <Details contentToShow={contentToShow} ad={adToShow} setAd={setAdToShow} handleFavButtonClick={handleFavButtonClick} favorites={favoriteAds} />}
+            {adToShow && <Details contentToShow={contentToShow} advertisement={adToShow} setAd={setAdToShow} />}
             <ListContainer>
                 {renderTitle()}
                 <ListGrid>

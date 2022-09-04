@@ -7,19 +7,18 @@ import { NotificationsContainer, NotificationsList, Title, NotificationCard, Emp
 interface NotificationsProps {
     notifications: Notification[],
     setDisplayNotifications: Function,
-    setAdToShow: Function,
+    setAdToShowById: Function,
     setNotifications: Function,
 }
 
-export const NotificationsModal = ({ notifications, setDisplayNotifications, setAdToShow, setNotifications }: NotificationsProps) => {
-
+export const NotificationsModal = ({ notifications, setDisplayNotifications, setAdToShowById, setNotifications }: NotificationsProps) => {
     useEffect(() => {
         document.addEventListener(
             "click",
             function (event) {
                 var clicked = event.target as Element;
-                var button = document.getElementById('notificationBtn')
-                var modal = document.getElementById('notificationsModal')
+                var button = document.getElementById('notificationBtn');
+                var modal = document.getElementById('notificationsModal');
 
                 if (
                     clicked != modal && clicked != button && !modal?.contains(clicked) && !button?.contains(clicked)
@@ -31,9 +30,9 @@ export const NotificationsModal = ({ notifications, setDisplayNotifications, set
         )
     }, []);
 
-    const handleNotificationClick = (notification) => {
+    const handleNotificationClick = (notification: Notification) => {
         if (notifications) {
-            setAdToShow(notification.ad);
+            setAdToShowById(notification.advertisementId);
             setDisplayNotifications(false);
             setNotifications([...notifications.filter(x => x != notification)]);
         }
@@ -52,7 +51,7 @@ export const NotificationsModal = ({ notifications, setDisplayNotifications, set
                                 <NotificationSigil>
                                     {
                                         sigil({
-                                            patp: notification.author,
+                                            patp: notification.ship,
                                             renderer: reactRenderer,
                                             size: 30,
                                             colors: ['white', 'black'],
@@ -60,7 +59,7 @@ export const NotificationsModal = ({ notifications, setDisplayNotifications, set
                                     }
                                 </NotificationSigil>
                                 <NotificationColumn>
-                                    <NotificationText><NotificationAuthor>{notification.author}</NotificationAuthor>
+                                    <NotificationText><NotificationAuthor>{notification.ship}</NotificationAuthor>
                                         {notification.text}
                                     </NotificationText>
                                     <NotificationDate>{moment.utc(notification.date).fromNow()}</NotificationDate>

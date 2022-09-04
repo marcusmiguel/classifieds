@@ -135,13 +135,12 @@ export const ImageColumn = styled.div`
 
 export const Image = styled.img`
     height: 18em;
+    width: 100%;
     border-radius: .25rem;
     object-fit: contain;
     box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px 0px;
     background: white;
     border: 1px solid rgba(0,0,0,.2);
-
-
 `;
 
 export const SecondaryImageColumn = styled.div`

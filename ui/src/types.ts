@@ -1,18 +1,23 @@
 
 export interface Advertisement {
     title: string,
+    id: string,
     desc: string,
-    publisher: string,
+    ship: string,
     date: string,
     images: string[],
-    price: number
+    price: string,
+    forward: boolean,
+    isFavorited: boolean,
 };
 
+export type Favorite = string;
+
 export interface Notification {
-    author: string,
+    ship: string,
     text: string,
     date: string,
-    ad: Advertisement,
+    advertisementId: string,
 };
 
 export enum NotificationMessages {
@@ -27,21 +32,7 @@ export enum TabContent {
     publishAd,
 };
 
-
-export interface Comment {
-    author: string,
-    text: string,
-    date: string,
-    replies: Reply[]
-};
-
-export interface Reply {
-    author: string,
-    text: string,
-    date: string
-};
-
 export interface Mutual {
     ship: string,
-    forwardedAds: Advertisement[]
+    forwardedAdsId: string[],
 };

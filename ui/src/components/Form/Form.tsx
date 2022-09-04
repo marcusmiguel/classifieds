@@ -5,27 +5,34 @@ import { AddedImage, AddedImageContainer, AddedImagesRow, AddIcon, AddImageButto
 interface formValues {
   title: string,
   desc: string,
-  images: string[],
   price: number,
-  tags: string[]
+  tags: string[],
+  images: string[],
 }
 
 export const Form = () => {
-  const [formValues, setFormValues] = useState<formValues>({ title: '', desc: '', images: [], tags: [], price: 0 });
-  const [addedImages, setAddedImages] = useState<string[]>([]);
+  const [formValues, setFormValues] = useState<formValues>({ title: '', desc: '', tags: [], price: 0, images: [] });
   const [inputUrl, setInputUrl] = useState('');
   const [disableAdImages, setDisableAdImages] = useState(false);
-  const [selectedOption, setSelectedOption] = useState("Yes")
+  const [selectedOption, setSelectedOption] = useState(true)
 
   const handleButtonClick = () => {
     api.poke(
       {
         app: 'classifieds',
         mark: 'classifieds-action',
-        json: { 'pub-advertisement': { 'title': formValues.title, 'desc': formValues.desc } },
+        json: {
+          'publish-ad': {
+            'title': formValues.title,
+            'desc': formValues.desc,
+            'price': formValues.price + '',
+            'forward': selectedOption,
+            'images': formValues.images
+          }
+        },
       }
     );
-    setFormValues({ title: '', desc: '', images: [], price: 0, tags: [] });
+    setFormValues({ title: '', desc: '', price: 0, tags: [], images: [] });
   };
 
   const handleChange = (e) => {
@@ -39,8 +46,8 @@ export const Form = () => {
   };
 
   const handleUrlSubmit = () => {
-    if (addedImages.length < 4 && inputUrl) {
-      setAddedImages([...addedImages, inputUrl]);
+    if (formValues.images.length < 4 && inputUrl) {
+      setFormValues({ ...formValues, images: [...formValues.images, inputUrl] });
       setInputUrl('');
     }
   };
@@ -51,18 +58,17 @@ export const Form = () => {
     }
   }
   useEffect(() => {
-    if (addedImages.length >= 4) {
+    if (formValues.images.length >= 4) {
       setDisableAdImages(true);
     };
-    setFormValues({ ...formValues, images: addedImages });
-  }, [addedImages]);
+  }, [formValues.images]);
 
   const handleRemoveImage = (image) => {
-    if (addedImages.length == 4) {
+    if (formValues.images.length == 4) {
       setDisableAdImages(false);
     }
 
-    setAddedImages(addedImages.filter(x => x != image));
+    setFormValues({ ...formValues, images: [...formValues.images.filter(x => x != image)] });
   }
 
   return (
@@ -86,26 +92,26 @@ export const Form = () => {
       <Label>Allow forwarding?</Label>
       <SelectRow>
         <RadioInput
-          onChange={() => setSelectedOption("Yes")}
+          onChange={() => setSelectedOption(true)}
           type="radio"
           value='Yes'
-          checked={selectedOption == "Yes"}
+          checked={selectedOption == true}
         />Yes
       </SelectRow >
       <SelectRow>
         <RadioInput
-          onChange={() => setSelectedOption("No")}
+          onChange={() => setSelectedOption(false)}
           type="radio"
-          checked={selectedOption == "No"}
+          checked={selectedOption == false}
           value='No'
         />No
       </SelectRow>
       <Label>Images</Label>
       {
-        addedImages.length > 0 &&
+        formValues.images.length > 0 &&
         <AddedImagesRow >
           {
-            addedImages.map((image: string, index) =>
+            formValues.images.map((image: string, index) =>
               <AddedImageContainer key={index}>
                 <RemoveImage onClick={() => handleRemoveImage(image)} />
                 <AddedImage src={image} />

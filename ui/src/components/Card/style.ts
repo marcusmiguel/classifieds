@@ -11,7 +11,7 @@ export const CardContainer = styled.div`
     transition: 0.3s;
     height: 7.5em;
     width: 100%;
-    padding: 1em 1em;
+    padding: .5em .5em;
     background: white;
     cursor: pointer;
 
@@ -21,12 +21,12 @@ export const CardContainer = styled.div`
 `;
 
 export const Image = styled.img`
-    height: 5em;
-    width: 8em;
+    height: 6.5em;
+    width: 6.5em;
     border-radius: .25rem;
     object-fit: contain;
     box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
-    border: 1px solid rgba(0,0,0,.2);
+    // border: 1px solid rgba(0,0,0,.2);
 `;
 
 export const ContentContainer = styled.div`
@@ -36,7 +36,7 @@ export const ContentContainer = styled.div`
     height: 100%;
     justify-content: space-between;
     align-items: space-between;
-    padding-left: 1em;
+    padding: 0em .5em 0em 1em;
 `;
 
 export const MiddleRow = styled.div`
@@ -94,7 +94,7 @@ export const Publisher = styled.span`
 
 export const Title = styled.div`
     font-weight: 900;
-    font-size: .7rem;
+    font-size: .8rem;
     line-height: 1em;
     height: 100%;
     width: 100%;

@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { Router, Routes, Route, BrowserRouter } from 'react-router-dom';
-// import { Charges, ChargeUpdateInitial, scryCharges } from '@urbit/api';
 import { Home } from './pages/'
 import { useAppDispatch, useAppSelector } from './redux/hooks/hooks';
 import { loadAds } from './redux/slices/advertisementsSlice';

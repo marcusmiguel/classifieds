@@ -5,19 +5,19 @@ import { CloseIcon, ForwardModalBox, ForwardModalContainer, MutualInfo, MutualRo
 
 interface ForwardModalProps {
     setDisplayForwardModal: Function,
-    ad: Advertisement
+    advertisement: Advertisement
 }
 
-export const ForwardModal = ({ setDisplayForwardModal, ad }: ForwardModalProps) => {
+export const ForwardModal = ({ setDisplayForwardModal, advertisement }: ForwardModalProps) => {
 
-    const [hardCodedMutuals, setHardCodedMutuals] = useState<Mutual[]>([{ ship: "~fidwed-sipwyn", forwardedAds: [] },
-    { ship: '~harlys-forbec', forwardedAds: [] },
-    { ship: '~haspet-mattel', forwardedAds: [] },
-    { ship: '~doppex-hobred', forwardedAds: [] },
-    { ship: '~doswed-hanpur', forwardedAds: [] },
-    { ship: '~bisrym-dirluc', forwardedAds: [] },
-    { ship: '~dirluc-bisrym', forwardedAds: [] },
-    { ship: '~hanpur-doswed', forwardedAds: [] }])
+    const [hardCodedMutuals, setHardCodedMutuals] = useState<Mutual[]>([{ ship: "~fidwed-sipwyn", forwardedAdsId: [] },
+    { ship: '~harlys-forbec', forwardedAdsId: [] },
+    { ship: '~haspet-mattel', forwardedAdsId: [] },
+    { ship: '~doppex-hobred', forwardedAdsId: [] },
+    { ship: '~doswed-hanpur', forwardedAdsId: [] },
+    { ship: '~bisrym-dirluc', forwardedAdsId: [] },
+    { ship: '~dirluc-bisrym', forwardedAdsId: [] },
+    { ship: '~hanpur-doswed', forwardedAdsId: [] }])
 
     const [mutualsQuery, setMutualsQuery] = useState('');
     const [debouncedMutualsQuery, setDebouncedMutualsQuery] = useState(mutualsQuery);
@@ -48,7 +48,7 @@ export const ForwardModal = ({ setDisplayForwardModal, ad }: ForwardModalProps) 
 
     const handleSendAd = (ship: string, ad: Advertisement) => {
         let copyHardCodedMutuals = [...hardCodedMutuals];
-        copyHardCodedMutuals = copyHardCodedMutuals.map(x => x.ship == ship ? { ...x, forwardedAds: [...x.forwardedAds, ad] } : x);
+        copyHardCodedMutuals = copyHardCodedMutuals.map(x => x.ship == ship ? { ...x, forwardedAdsId: [...x.forwardedAdsId, ad.id] } : x);
         setHardCodedMutuals(copyHardCodedMutuals);
     }
 
@@ -85,12 +85,12 @@ export const ForwardModal = ({ setDisplayForwardModal, ad }: ForwardModalProps) 
                                         <Ship>{mutual.ship}</Ship>
                                     </MutualInfo>
                                     {
-                                        mutual.forwardedAds.includes(ad) ?
+                                        mutual.forwardedAdsId.includes(advertisement.id) ?
                                             <SentButton >
                                                 <SentIcon />Sent
                                             </SentButton>
                                             :
-                                            <SendButton onClick={() => handleSendAd(mutual.ship, ad)}>
+                                            <SendButton onClick={() => handleSendAd(mutual.ship, advertisement)}>
                                                 <SendIcon />Send
                                             </SendButton>
                                     }
