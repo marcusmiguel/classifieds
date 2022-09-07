@@ -101,7 +101,7 @@ export const Details = ({ advertisement, setAd, contentToShow }: DetailsProps) =
     return (
         <DetailsContainer id="detailsContainer" >
             <UpperRow>
-                {contentToShow == 'theirAds' ? 'Their Ads' : 'My Ads'} <NavigatedIcon /> Details
+                {contentToShow == TabContent[TabContent.ads] ? 'Ads' : 'My Ads'} <NavigatedIcon /> Details
                 <CloseIcon onClick={handleDetailsClose} />
             </UpperRow>
             <FirstSection>
@@ -127,13 +127,13 @@ export const Details = ({ advertisement, setAd, contentToShow }: DetailsProps) =
                                 <PriceLabel>
                                     Price
                                 </PriceLabel>
-                                <Price>$100</Price>
+                                <Price>${advertisement.price}</Price>
                             </PriceContainer>
                             <SourceContainer>
                                 <PublisherInfo>
                                     {
                                         sigil({
-                                            patp: 'fidwed-sipwyn',
+                                            patp: advertisement.ship,
                                             renderer: reactRenderer,
                                             size: 18,
                                             colors: ['white', 'black'],
@@ -148,7 +148,7 @@ export const Details = ({ advertisement, setAd, contentToShow }: DetailsProps) =
                         </InfoRow>
                     </InfoBox>
                     <Actions>
-                        {contentToShow == TabContent[TabContent.theirAds] ?
+                        {contentToShow == TabContent[TabContent.ads] ?
                             <>
                                 <FavButton isFavorited={advertisement.isFavorited} onClick={() => dispatch(toggleFavorite({ id: advertisement.id }))} >
                                     {advertisement.isFavorited ? <><FavIconClicked />Favorited</> : <><FavIcon />Favorite</>}

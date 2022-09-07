@@ -118,8 +118,8 @@ export const List = ({ ads, contentToShow }: ListProps) => {
     const renderTitle = () => {
         return (<>
             <UpperRow>
-                <Title>{contentToShow == TabContent[TabContent.theirAds] && 'Their Ads'}
-                    {contentToShow == TabContent[TabContent.myads] && 'My ads'}
+                <Title>{contentToShow == TabContent[TabContent.ads] && 'Ads'}
+                    {contentToShow == TabContent[TabContent.myads] && 'My Ads'}
                 </Title>
                 <UserInfoContainer>
                     <NotificationButton id="notificationBtn" onClick={handleNotificationsButtonClick}>
@@ -140,7 +140,7 @@ export const List = ({ ads, contentToShow }: ListProps) => {
                     {displayNotifications && <NotificationsModal notifications={unreadNotifications} setDisplayNotifications={setDisplayNotifications} setAdToShowById={setAdToShowById} setNotifications={setUnreadNotifications}></NotificationsModal>}
                 </UserInfoContainer>
             </UpperRow>{
-                (contentToShow == TabContent[TabContent.theirAds]) &&
+                (contentToShow == TabContent[TabContent.ads]) &&
                 <><FilterUpperRow><SearchContainer><SearchIcon /><SearchBar placeholder="Search" value={debouncedAdsQuery} onChange={handleSearchAdsQueryChange} /></SearchContainer>
                     <Dropdown id="dropdown" onClick={() => setDisplayDropdownModal(!displayDropdownModal)}>
                         <DropdownText>{dropdownContent}</DropdownText>

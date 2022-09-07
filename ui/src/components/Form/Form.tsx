@@ -73,7 +73,7 @@ export const Form = () => {
 
   return (
     <FormContainer>
-      <FormTitle>Publish Ad</FormTitle>
+      <FormTitle>New Ad</FormTitle>
       <Label>Title</Label>
       <Input
         placeholder="give a small title..."

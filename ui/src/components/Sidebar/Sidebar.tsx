@@ -15,14 +15,14 @@ export const Sidebar = ({ setContentFunc }: SidebarProps) => {
         document.querySelectorAll("a.active").forEach(a => a.classList.remove("active"));
         e.currentTarget.classList.toggle('active');
 
-        if (e.currentTarget.dataset.value == TabContent.theirAds) {
-            setContentFunc(TabContent[TabContent.theirAds]);
+        if (e.currentTarget.dataset.value == TabContent.ads) {
+            setContentFunc(TabContent[TabContent.ads]);
         }
         else if (e.currentTarget.dataset.value == TabContent.myads) {
             setContentFunc(TabContent[TabContent.myads]);
         }
-        else if (e.currentTarget.dataset.value == TabContent.publishAd) {
-            setContentFunc(TabContent[TabContent.publishAd]);
+        else if (e.currentTarget.dataset.value == TabContent.newAd) {
+            setContentFunc(TabContent[TabContent.newAd]);
         }
         else if (e.currentTarget.dataset.value == TabContent.chat) {
             setContentFunc(TabContent[TabContent.chat]);
@@ -37,10 +37,10 @@ export const Sidebar = ({ setContentFunc }: SidebarProps) => {
         <SidebarContainer>
             <Title>Classifieds</Title>
             <Tabs>
-                <Tab href="#" data-value={TabContent.theirAds} className="active" onClick={handleTabClick}><TheiAdsIcon />Their Ads</Tab>
+                <Tab href="#" data-value={TabContent.ads} className="active" onClick={handleTabClick}><TheiAdsIcon />Ads</Tab>
                 <Tab href="#" data-value={TabContent.myads} onClick={handleTabClick}><MyAdsIcon />My Ads</Tab>
-                <Tab href="#" data-value={TabContent.chat} onClick={handleTabClick}><ChatIcon />Chats</Tab>
-                <Tab href="#" data-value={TabContent.publishAd} onClick={handleTabClick}><PublishAdIcon />Publish Ad</Tab>
+                <Tab href="#" data-value={TabContent.chat} onClick={handleTabClick}><ChatIcon />Chat</Tab>
+                <Tab href="#" data-value={TabContent.newAd} onClick={handleTabClick}><PublishAdIcon />New Ad</Tab>
             </Tabs>
 
         </SidebarContainer>

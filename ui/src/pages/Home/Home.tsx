@@ -9,19 +9,19 @@ import { HomeContainer } from "./style";
 
 const Home = () => {
   const { ads, myads } = useAppSelector((state) => state.advertisements.advertisements);
-  const [contentToShow, setContentToShow] = useState(TabContent[TabContent.theirAds]);
+  const [contentToShow, setContentToShow] = useState(TabContent[TabContent.ads]);
 
   return (
     <HomeContainer>
       <Sidebar setContentFunc={setContentToShow} />
       {
-        (contentToShow == TabContent[TabContent.theirAds])
+        (contentToShow == TabContent[TabContent.ads])
         && <List ads={ads} contentToShow={contentToShow} />
       }
       {(contentToShow == TabContent[TabContent.myads])
         && <List ads={myads} contentToShow={contentToShow} />
       }
-      {(contentToShow == TabContent[TabContent.publishAd])
+      {(contentToShow == TabContent[TabContent.newAd])
         && <Form />}
       {(contentToShow == TabContent[TabContent.chat])
         && <Chat />

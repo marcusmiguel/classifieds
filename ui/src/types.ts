@@ -26,10 +26,10 @@ export enum NotificationMessages {
 };
 
 export enum TabContent {
-    theirAds,
+    ads,
     myads,
     chat,
-    publishAd,
+    newAd,
 };
 
 export interface Mutual {
