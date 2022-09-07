@@ -2,17 +2,13 @@
 /+  gossip, default-agent, dbug
 ::
 /$  grab-ad  %noun  %classifieds-advertisement
-/$  grab-ads  %noun  %classifieds-advertisements
+/$  grab-initial-ads  %noun  %classifieds-initial-ads
+/$  grab-state  %noun  %classifieds-state
 ::
-|% 
+|%  
 +$  versioned-state
   $%  state-0
   ==  
-+$  state-0
-  $:  %0
-      ads=(map ship advertisements)
-      myads=advertisements
-  ==
 ::   
 +$  eyre-id  @ta
 +$  card  card:agent:gall
@@ -25,14 +21,17 @@
     %-  malt
     ^-  (list [mark $-(* vase)])
     :~  [%classifieds-advertisement |=(n=* !>((grab-ad n)))]
-        [%classifieds-advertisements |=(n=* !>((grab-ads n)))]
+        [%classifieds-initial-ads |=(n=* !>((grab-initial-ads n)))]
+        [%classifieds-state |=(n=* !>((grab-state n)))]
     ==
 ::
 %-  agent:dbug
 ^-  agent:gall
+=<
 |_  =bowl:gall
 +*  this  .
     def   ~(. (default-agent this %.n) bowl)
+    hc    ~(. +> bowl)
 ::
 ++  on-init
   ^-  (quip card _this)
@@ -46,6 +45,7 @@
 ++  on-load
   |=  old-state=vase
   ^-  (quip card _this)
+  :: `this(state [%0 ads=*(map ship advertisements) myads=~ favs=~])
   =/  old  !<(versioned-state old-state)
   ?-  -.old
     %0  `this(state old)
@@ -58,17 +58,19 @@
     %classifieds-action
       =/  act  !<(action vase)
       ?-  -.act
-          %pub-advertisement
+        ::
+          %publish-ad
         ?>  =(our.bowl src.bowl)
-        ::
-        :: TODO: Validate title/desc lenght
-        ::
-        =/  ad  [our.bowl now.bowl title.act desc.act]
+        =/  ad  [our.bowl (sham eny.bowl) now.bowl forward.act title.act desc.act price.act images.act]
         :_  this(myads (weld myads ~[ad])) 
         [(invent:gossip %classifieds-advertisement !>(ad))]~
-      ::
-      :: TODO: Add delete-ad use case
-      ::
+        ::
+          %toggle-favorite
+        ?>  =(our.bowl src.bowl)
+        =/  exists  (find ~[id.act] favorites)
+        ?~  exists
+          `this(favorites (weld favorites ~[id.act])) 
+        `this(favorites (oust [u.exists 1] favorites))
       ==
   ==
 ::
@@ -89,14 +91,14 @@
   ?.  =(/~/gossip/source path)
     (on-watch:def path)
   :_  this
-  [%give %fact ~ %classifieds-advertisements !>([now.bowl myads])]~
+  [%give %fact ~ %classifieds-initial-ads !>([now.bowl myads])]~
 ::
 ++  on-peek 
   |=  =path
   ^-  (unit (unit cage))
   ?+  path  (on-peek:def path)
-    [%x %classifieds-advertisements %all ~]
-    ``json+!>([now.bowl myads])
+    [%x %state ~]
+    ``classifieds-state+!>(state)
   ==
 ::
 ++  on-agent
@@ -106,10 +108,10 @@
       ==
     (on-agent:def wire sign)
   ?+  p.cage.sign  (on-agent:def wire sign)
-    %classifieds-advertisements
-      =/  newads  !<(advertisements-payload q.cage.sign)
-      `this(ads (~(gas by ads) ~[[src.bowl +.newads]]))
-    %classifieds-advertisement
+    %classifieds-initial-ads  :: will overwrite all the previous ads from that ship
+      =/  newads  !<(initial-ads q.cage.sign)
+      `this(ads (~(gas by ads) ~[[src.bowl +.newads]]), favorites (update-favorites:hc [+.newads favorites]))
+    %classifieds-advertisement :: will add the newad to map
       =/  newad  !<(advertisement q.cage.sign)
       =/  newlist  (weld (~(got by ads) src.bowl) [newad ~])
       `this(ads (~(gas by ads) ~[[src.bowl newlist]]))
@@ -117,4 +119,27 @@
 ::  
 ++  on-fail   on-fail:def
 ++  on-leave  on-leave:def
+--
+|_  bowl=bowl:gall
+++  update-favorites
+  |=  [ads=(list advertisement) favs=(list favorite)]
+  ^-  (list favorite)
+  =/  newfavs  ~
+  =/  ids  (get-ids ads)
+  |-
+  ?~  favs
+    newfavs
+  =/  fav  `favorite`-.favs
+  =/  exists  (find ~[fav] ids)
+  ?~  exists
+    $(favs +.favs)
+  [fav $(favs +.favs)]
+++  get-ids
+  |=  ads=(list advertisement)
+  ^-  (list @uvH)
+  |-  
+  ?~  ads
+    ~
+  =/  ad  `advertisement`-.ads
+  [`@uvH`id.ad $(ads +.ads)]
 --
