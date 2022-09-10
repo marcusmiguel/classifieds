@@ -104,8 +104,9 @@
   |=  =path
   ^-  (unit (unit cage))
   ?+  path  (on-peek:def path)
-    [%x %state ~]
-    ``classifieds-state+!>(state)
+    [%x %state ~]  ``classifieds-state+!>(state)
+    [%x %favorites ~]  ``noun+!>(favorites)
+    [%x %our-ads ~]  ``classifieds-advertisements+!>(myads)
   ==
 ::
 ++  on-agent
