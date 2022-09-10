@@ -65,6 +65,13 @@
         :_  this(myads (weld myads ~[ad])) 
         [(invent:gossip %classifieds-advertisement !>(ad))]~
         ::
+          %delete-ad
+        ?>  =(our.bowl src.bowl)
+        =/  exists  (find ~[id.act] (turn myads |=(=advertisement id.advertisement)))
+        ?~  exists
+          ~|((weld "No ad with id " (scow %uv id.act)) !!)
+        :_  this(myads (oust [u.exists 1] myads))
+        ~
           %toggle-favorite
         ?>  =(our.bowl src.bowl)
         =/  exists  (find ~[id.act] favorites)

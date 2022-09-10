@@ -3,6 +3,7 @@
   $%
     [%publish-ad title=tape desc=tape forward=? price=tape images=(list @t)]
     [%toggle-favorite id=@uv]
+    [%delete-ad id=@uv]
   ==
 :: TODO: change those tapes to @t?
 ::
