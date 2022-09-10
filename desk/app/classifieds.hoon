@@ -70,8 +70,10 @@
         =/  exists  (find ~[id.act] (turn myads |=(=advertisement id.advertisement)))
         ?~  exists
           ~|((weld "No ad with id " (scow %uv id.act)) !!)
-        :_  this(myads (oust [u.exists 1] myads))
-        ~
+        =/  myads-new  (oust [u.exists 1] myads)
+        :_  this(myads myads-new)
+        [(invent:gossip %classifieds-initial-ads !>([now.bowl myads-new]))]~
+        ::
           %toggle-favorite
         ?>  =(our.bowl src.bowl)
         =/  exists  (find ~[id.act] favorites)
@@ -119,7 +121,7 @@
     %classifieds-initial-ads  :: will overwrite all the previous ads from that ship
       =/  newads  !<(initial-ads q.cage.sign)
       `this(ads (~(gas by ads) ~[[src.bowl +.newads]]), favorites (update-favorites:hc [+.newads favorites]))
-    %classifieds-advertisement :: will add the newad to map
+    %classifieds-advertisement :: will add the new ad to map
       =/  newad  !<(advertisement q.cage.sign)
       =/  newlist  (weld (~(got by ads) src.bowl) [newad ~])
       `this(ads (~(gas by ads) ~[[src.bowl newlist]]))
