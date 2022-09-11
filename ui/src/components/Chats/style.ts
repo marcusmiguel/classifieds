@@ -71,11 +71,10 @@ export const Date = styled.div`
 export const MessagePreview = styled.div`
     line-height: 1;
     font-size: .65rem;
-    display: block;
     text-overflow: ellipsis;
+    white-space: nowrap;
     overflow: hidden;
     padding: 0 2.4em;
-    white-space: nowrap;
     color: rgba(0, 0, 0, .6);
 `;
 
@@ -97,6 +96,7 @@ export const ConversationUpperRow = styled.div`
     align-items: center;
     justify-content: center;
     height: 15%;
+    
 `;
 
 export const ConversationBottomRow = styled.div`
@@ -223,12 +223,23 @@ export const CardAdTitle = styled.div`
     padding: 0 2.2em;
     margin-bottom: .5em;
     font-weight: 900;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 `;
 
 export const ConversationAdTitle = styled.div`
     font-size: .7rem;
-    display: flex;
-    align-content: start;
     font-weight: 900;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 100%;
+    padding: 0 3em;
+    text-align: center;
+`;
+
+export const EmptyListMessage = styled.div`
+    font-size: .8rem;
 `;
 

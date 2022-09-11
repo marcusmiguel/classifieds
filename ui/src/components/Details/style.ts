@@ -144,10 +144,9 @@ export const Image = styled.img`
     border: 1px solid rgba(0,0,0,.2);
 `;
 
-export const SecondaryImageColumn = styled.div`
+export const SecondaryImageRow = styled.div`
     display: flex;
     align-items: start;
-    justify-content: space-between;
     margin-top: 1.5em;
     width: 100%;
     height: 12em;
@@ -160,15 +159,15 @@ export const SecondaryImage = styled.img`
     border-radius: .25rem;
     cursor: pointer;
     object-fit: contain;
-    box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px 0px;
     &:hover{
         outline-style: double;
         outline-color: black;
         outline-width: thick;
      }
-     background: white;
-     border: 1px solid rgba(0,0,0,.2);
-
+    background: white;
+    border: 1px solid rgba(0,0,0,.2);
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px 0px;
+    margin-right: 8.55%;
 `;
 
 export const InfoColumn = styled.div`
@@ -315,6 +314,7 @@ export const ConversationUpperRow = styled.div`
     align-items: center;
     justify-content: center;
     height: 15%;
+    width: 100%;
 `;
 
 export const ConversationBottomRow = styled.div`
@@ -436,10 +436,14 @@ export const SendIcon = styled(RiSendPlane2Line)`
 
 export const ConversationAdTitle = styled.div`
     font-size: .7rem;
-    display: flex;
     padding: 0 2.6em;
     font-weight: 900;
     height: 1rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 100%;
+    text-align: center;
 `;
 
 

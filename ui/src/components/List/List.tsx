@@ -4,7 +4,7 @@ import { Advertisement, NotificationMessages, TabContent, Notification } from ".
 import { Card } from "../Card/Card";
 import { Details } from "../Details/Details";
 import { Pagination } from "../Pagination/Pagination";
-import { Dropdown, DropdownIcon, DropdownModal, DropdownOption, DropdownText, FilterUpperRow, ListContainer, ListGrid, NotificationButton, NotificationIcon, SearchBar, SearchContainer, SearchIcon, ShipName, Tag, Tags, Title, Unread, UpperRow, UserInfo, UserInfoContainer, } from './style';
+import { Dropdown, DropdownIcon, DropdownModal, DropdownOption, DropdownText, EmptyListMessage, FilterUpperRow, ListContainer, ListGrid, NotificationButton, NotificationIcon, SearchBar, SearchContainer, SearchIcon, ShipName, Tag, Tags, Title, Unread, UpperRow, UserInfo, UserInfoContainer, } from './style';
 import { NotificationsModal } from "../NotificationsModal/NotificationsModal";
 import moment from "moment";
 import { useAppDispatch, useAppSelector } from '../../redux/hooks/hooks';
@@ -166,14 +166,14 @@ export const List = ({ listAds, contentToShow }: ListProps) => {
                     {listAds && listAds.length > 0 ?
                         (
                             (queriedAds?.length == 0) ?
-                                <div>No results found.</div>
+                                <EmptyListMessage>No results found.</EmptyListMessage>
                                 :
                                 currentAds?.map((ad, index) =>
                                     < Card key={index} advertisement={ad} setAdToShow={setAdToShow} />
                                 )
                         )
                         :
-                        <div>There are no ads to show.</div>
+                        <EmptyListMessage>There are no ads to show.</EmptyListMessage>
                     }
                 </ListGrid >
                 <Pagination records={queriedAds} pageLimit={14} pageNeighbours={2} onPageChanged={onPageChanged} />

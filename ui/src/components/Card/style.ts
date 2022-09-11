@@ -54,7 +54,7 @@ export const BottomRow = styled.div`
 export const ForwardIcon = styled(RiShareForwardFill)`
     display: inline;
     margin: 0 .2em .2em .2em;
-    `;
+`;
 
 export const DeleteIcon = styled(RiDeleteBinLine)``;
 
@@ -105,14 +105,14 @@ export const Title = styled.div`
 
 export const Icons = styled.div`
     display: flex;
-    `;
+`;
+
 export const Date = styled.span`
     display: flex;
     align-items: end;
     font-size: .7rem;
     font-style: italic;
     height: 1.3em;
-
 `;
 
 export const PriceLabel = styled.span`

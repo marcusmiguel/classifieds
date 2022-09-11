@@ -117,7 +117,7 @@ export const toggleFavorite = createAsyncThunk('toggleFavorite', async (data: to
 
     let advertisements = state.classifieds.data.ads;
     let newads = advertisements!.map(ad => ad.id == data.id ? { ...ad, isFavorited: !ad.isFavorited } : ad)
-    thunkAPI.dispatch(setState({ ads: [...newads], myads: state.classifieds.data.myads, favorites: state.classifieds.data.favorites }));
+    thunkAPI.dispatch(setAds([...newads]));
 
     if (favorites) {
         if (!favorites.includes(data.id)) {

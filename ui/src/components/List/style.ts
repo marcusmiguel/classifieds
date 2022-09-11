@@ -197,3 +197,7 @@ export const DropdownOption = styled.div`
     border-bottom-right-radius: .25em;
   }
 `;
+
+export const EmptyListMessage = styled.div`
+  font-size: .8rem;
+`;

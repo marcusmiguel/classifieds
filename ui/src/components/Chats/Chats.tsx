@@ -5,7 +5,7 @@ import api from "../../api";
 import { useAppSelector } from "../../redux/hooks/hooks";
 import { Chat } from "../../types";
 import { daToDate } from "../../util";
-import { ChatCard, ChatContainer, ChatList, ChatSection, ChatTitle, Conversation, MessageList, InputRow, Input, SendIcon, MessagePreview, Date, CardReceiver, CardReceiverShip, ConversationReceiver, ConversationReceiverShip, ConversationAdTitle, CardAdTitle, ReceivedMessage, SentMessage, MessageText, MessageDate, CardUpperRow, ConversationUpperRow, ConversationBottomRow, MessageShip, ReceivedMessageBox, SigilContainer } from "./style";
+import { ChatCard, ChatContainer, ChatList, ChatSection, ChatTitle, Conversation, MessageList, InputRow, Input, SendIcon, MessagePreview, Date, CardReceiver, CardReceiverShip, ConversationReceiver, ConversationReceiverShip, ConversationAdTitle, CardAdTitle, ReceivedMessage, SentMessage, MessageText, MessageDate, CardUpperRow, ConversationUpperRow, ConversationBottomRow, MessageShip, ReceivedMessageBox, SigilContainer, EmptyListMessage } from "./style";
 
 export const Chats = () => {
     const [inputMessage, setInputMessage] = useState('');
@@ -163,7 +163,7 @@ export const Chats = () => {
                     }
                 </ChatSection>
                 :
-                <div>There are no chats to show.</div>}
+                <EmptyListMessage>There are no chats to show.</EmptyListMessage>}
         </ChatContainer >
     );
 }

@@ -65,7 +65,8 @@ export const Form = () => {
     if (id == 'price' && value < 0)
       return;
     if (id == 'price') {
-      setFormValues({ ...formValues, [id]: value.slice(0, 8) });
+      var t = value.slice(0, 8);
+      setFormValues({ ...formValues, [id]: (t.indexOf(".") >= 0) ? (t.substr(0, t.indexOf(".")) + t.substr(t.indexOf("."), 3)) : t });
       return;
     }
     if (id == 'title')

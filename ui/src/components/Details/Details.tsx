@@ -8,7 +8,7 @@ import { Advertisement, Chat, TabContent } from "../../types";
 import { daToDate } from "../../util";
 import { ConfirmModal } from "../ConfirmModal/ConfirmModal";
 import { ForwardModal } from "../ForwardModal/ForwardModal";
-import { Desc, DetailsContainer, Publisher, Title, Image, Date, FavButton, FavIcon, ForwardButton, ForwardIcon, Actions, DeleteButton, DeleteIcon, Price, InfoRow, FirstSection, CloseIcon, PriceContainer, SourceContainer, PriceLabel, PublisherInfo, SecondaryImageColumn, SecondaryImage, UpperRow, Tags, Tag, ImageColumn, InfoColumn, InfoBox, ChatButton, ChatIcon, FavIconClicked, Conversation, ConversationUpperRow, ConversationReceiver, ConversationReceiverShip, ConversationAdTitle, MessageList, SentMessage, MessageText, MessageDate, ReceivedMessage, SigilContainer, ReceivedMessageBox, ConversationBottomRow, Input, InputRow, SendIcon, NavigatedIcon } from "./style";
+import { Desc, DetailsContainer, Publisher, Title, Image, Date, FavButton, FavIcon, ForwardButton, ForwardIcon, Actions, DeleteButton, DeleteIcon, Price, InfoRow, FirstSection, CloseIcon, PriceContainer, SourceContainer, PriceLabel, PublisherInfo, SecondaryImage, UpperRow, Tags, Tag, ImageColumn, InfoColumn, InfoBox, ChatButton, ChatIcon, FavIconClicked, Conversation, ConversationUpperRow, ConversationReceiver, ConversationReceiverShip, ConversationAdTitle, MessageList, SentMessage, MessageText, MessageDate, ReceivedMessage, SigilContainer, ReceivedMessageBox, ConversationBottomRow, Input, InputRow, SendIcon, NavigatedIcon, SecondaryImageRow } from "./style";
 
 interface DetailsProps {
     advertisement: Advertisement,
@@ -72,7 +72,6 @@ export const Details = ({ advertisement, setAd, contentToShow }: DetailsProps) =
     }
 
     const handleDeleteModalConfirm = () => {
-        // poke the agent
         dispatch(deleteAd({ id: advertisement.id }));
         setAd();
         setDisplayConfirmModal(false);
@@ -161,11 +160,11 @@ export const Details = ({ advertisement, setAd, contentToShow }: DetailsProps) =
                         :
                         <Image src={'/apps/classifieds/assets/placeholder.png'} />
                     }
-                    <SecondaryImageColumn>
+                    <SecondaryImageRow>
                         {secondaryImages[0] && <SecondaryImage src={secondaryImages[0]} data-value={secondaryImages[0]} onClick={handleImageClick} />}
                         {secondaryImages[1] && <SecondaryImage src={secondaryImages[1]} data-value={secondaryImages[1]} onClick={handleImageClick} />}
                         {secondaryImages[2] && <SecondaryImage src={secondaryImages[2]} data-value={secondaryImages[2]} onClick={handleImageClick} />}
-                    </SecondaryImageColumn>
+                    </SecondaryImageRow>
                 </ImageColumn>
                 <InfoColumn>
                     <InfoBox>
