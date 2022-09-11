@@ -174,7 +174,7 @@
 ++  update-favorites
   |=  [ads=(list advertisement) favs=(list favorite)]
   ^-  (list favorite)
-  =/  ids  (get-ids ads)
+  =/  ids  (turn ads |=(=advertisement id.advertisement))
   |-
   ?~  favs
     ~
@@ -189,7 +189,7 @@
 ++  update-chats
   |=  [ads=(list advertisement) chats=(list chat)]
   ^-  (list chat)
-  =/  ids  (get-ids ads)
+  =/  ids  (turn ads |=(=advertisement id.advertisement))
   |-
   ?~  chats
     ~
@@ -199,16 +199,8 @@
     $(chats +.chats)
   [chat $(chats +.chats)]
 ::
-::  returns all ids from a list of ads
+::  returns mutuals from %pals
 ::
-++  get-ids
-  |=  ads=(list advertisement)
-  ^-  (list @uvH)
-  |-  
-  ?~  ads
-    ~
-  =/  ad  `advertisement`-.ads
-  [`@uvH`id.ad $(ads +.ads)]
 ++  get-mutuals
   .^((set ship) %gx /(scot %p our.bowl)/pals/(scot %da now.bowl)/mutuals/noun)
 --
