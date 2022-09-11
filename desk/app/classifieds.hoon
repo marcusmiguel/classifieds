@@ -2,7 +2,7 @@
 /+  gossip, default-agent, dbug
 ::
 /$  grab-ad  %noun  %classifieds-advertisement
-/$  grab-initial-ads  %noun  %classifieds-initial-ads
+/$  grab-ad-catalog  %noun  %classifieds-ad-catalog
 /$  grab-state  %noun  %classifieds-state
 ::
 |%  
@@ -21,7 +21,7 @@
     %-  malt
     ^-  (list [mark $-(* vase)])
     :~  [%classifieds-advertisement |=(n=* !>((grab-ad n)))]
-        [%classifieds-initial-ads |=(n=* !>((grab-initial-ads n)))]
+        [%classifieds-ad-catalog |=(n=* !>((grab-ad-catalog n)))]
         [%classifieds-state |=(n=* !>((grab-state n)))]
     ==
 ::
@@ -72,7 +72,7 @@
           ~|((weld "No ad with id " (scow %uv id.act)) !!)
         =/  myads-new  (oust [u.exists 1] myads)
         :_  this(myads myads-new)
-        [(invent:gossip %classifieds-initial-ads !>([now.bowl myads-new]))]~
+        [(invent:gossip %classifieds-ad-catalog !>([now.bowl myads-new]))]~
         ::
           %toggle-favorite
         ?>  =(our.bowl src.bowl)
@@ -100,7 +100,7 @@
   ?.  =(/~/gossip/source path)
     (on-watch:def path)
   :_  this
-  [%give %fact ~ %classifieds-initial-ads !>([now.bowl myads])]~
+  [%give %fact ~ %classifieds-ad-catalog !>([now.bowl myads])]~
 ::
 ++  on-peek 
   |=  =path
@@ -118,8 +118,8 @@
       ==
     (on-agent:def wire sign)
   ?+  p.cage.sign  (on-agent:def wire sign)
-    %classifieds-initial-ads  :: will overwrite all the previous ads from that ship
-      =/  newads  !<(initial-ads q.cage.sign)
+    %classifieds-ad-catalog  :: will overwrite all the previous ads from that ship
+      =/  newads  !<(ad-catalog q.cage.sign)
       `this(ads (~(gas by ads) ~[[src.bowl +.newads]]), favorites (update-favorites:hc [+.newads favorites]))
     %classifieds-advertisement :: will add the new ad to map
       =/  newad  !<(advertisement q.cage.sign)

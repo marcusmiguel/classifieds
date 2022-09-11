@@ -18,9 +18,12 @@
       price=tape 
       images=(list @t)
     ==
-:: needs @da timestamp to make it unique, otherwise gossip will not propagate this if we send the same list twice.
+:: An `ad-catalog` is a timestamped list of `advertisement`s.
+:: The @da timestamp to makes it unique, otherwise gossip will not propagate this if we send the same list twice.
+:: This is of particular importance for broadcasting empty lists of
+:: `advertisement`s more than once (e.g. after an agent got `|nuke`d).
 ::
-+$  initial-ads  [timestamp=@da (list advertisement)]  
++$  ad-catalog  [timestamp=@da (list advertisement)]  
 +$  favorite  [id=@uvH]
 +$  state-0
   $:  %0

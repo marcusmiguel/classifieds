@@ -1,9 +1,9 @@
 /-  classifieds
 =,  format
-|_  ads=initial-ads:classifieds
+|_  ads=ad-catalog:classifieds
 ++  grab
   |%
-  ++  noun  initial-ads:classifieds
+  ++  noun  ad-catalog:classifieds
   --
 ++  grow
   |%
