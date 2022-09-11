@@ -1,5 +1,5 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import { advertisementsReducer } from "./slices";
+import { classifiedsReducer } from "./slices";
 import {
     persistStore,
     persistReducer,
@@ -18,7 +18,7 @@ const persistConfig = {
     storage,
 }
 
-const rootReducer = combineReducers({ advertisements: advertisementsReducer, });
+const rootReducer = combineReducers({ classifieds: classifiedsReducer, });
 const persistedReducer = persistReducer(persistConfig, rootReducer)
 
 export const store = configureStore({

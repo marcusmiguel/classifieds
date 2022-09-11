@@ -3,12 +3,12 @@ import moment from "moment";
 import React, { useEffect, useRef, useState } from "react";
 import api from "../../api";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks/hooks";
-import { toggleFavorite } from "../../redux/slices/advertisementsSlice";
-import { Advertisement, TabContent } from "../../types";
+import { deleteAd, toggleFavorite } from "../../redux/slices/classifiedsSlice";
+import { Advertisement, Chat, TabContent } from "../../types";
 import { daToDate } from "../../util";
 import { ConfirmModal } from "../ConfirmModal/ConfirmModal";
 import { ForwardModal } from "../ForwardModal/ForwardModal";
-import { Desc, DetailsContainer, Publisher, Title, Image, Date, FavButton, FavIcon, ForwardButton, ForwardIcon, Actions, DeleteButton, DeleteIcon, Price, InfoRow, FirstSection, CloseIcon, PriceContainer, SourceContainer, PriceLabel, PublisherInfo, SecondaryImageColumn, SecondaryImage, UpperRow, Tags, Tag, ImageColumn, InfoColumn, InfoBox, ChatButton, ChatIcon, FavIconClicked, Conversation, ConversationUpperRow, ConversationReceiver, ConversationReceiverShip, ConversationAdTitle, MessageList, SentMessage, MessageText, MessageDate, ReceivedMessage, SigilContainer, ReceivedMessageBox, ConversationBottomRow, Input, InputRow, SendIcon, NavigatedIcon } from "./style";
+import { Desc, DetailsContainer, Publisher, Title, Image, Date, FavButton, FavIcon, ForwardButton, ForwardIcon, Actions, DeleteButton, DeleteIcon, Price, InfoRow, FirstSection, CloseIcon, PriceContainer, SourceContainer, PriceLabel, PublisherInfo, SecondaryImage, UpperRow, Tags, Tag, ImageColumn, InfoColumn, InfoBox, ChatButton, ChatIcon, FavIconClicked, Conversation, ConversationUpperRow, ConversationReceiver, ConversationReceiverShip, ConversationAdTitle, MessageList, SentMessage, MessageText, MessageDate, ReceivedMessage, SigilContainer, ReceivedMessageBox, ConversationBottomRow, Input, InputRow, SendIcon, NavigatedIcon, SecondaryImageRow } from "./style";
 
 interface DetailsProps {
     advertisement: Advertisement,
@@ -17,19 +17,13 @@ interface DetailsProps {
 }
 
 export const Details = ({ advertisement, setAd, contentToShow }: DetailsProps) => {
-
+    const dispatch = useAppDispatch();
+    const chats = useAppSelector((state) => state.classifieds.data.chats);
+    const [chat, setChat] = useState<Chat | undefined>();
     const [displayChat, setDisplayChat] = useState(false);
     const [displayConfirmModal, setDisplayConfirmModal] = useState(false);
     const [displayForwardModal, setDisplayForwardModal] = useState(false);
-    const dispatch = useAppDispatch();
-
-    const [hardCodedChat, setHardCodedChat] = useState({
-        ship: '~fidwed-sipwyn',
-        msgs: [{ ship: '~harlys-forbec', date: moment.utc(), text: 'Can we have a chat about the ad that you just posted?' }
-        ]
-        , adTitle: 'myad2'
-    });
-
+    const [inputMessage, setInputMessage] = useState('');
     const [mainImage, setMainImage] = useState<string>(advertisement.images[0]);
     const [secondaryImages, setSecondaryImages] = useState<string[]>([...advertisement.images.slice(1)])
 
@@ -46,12 +40,30 @@ export const Details = ({ advertisement, setAd, contentToShow }: DetailsProps) =
                 if (
                     clicked != chat && !chat?.contains(clicked) && clicked != chatButton && !chatButton?.contains(clicked)
                 ) {
-                    setDisplayChat(false)
+                    setDisplayChat(false);
+                    scrollToTop();
                 }
             },
             false
         )
     }, []);
+
+    useEffect(() => {
+        if (chats) {
+            let newchat = [...chats].filter(chat => chat["advertisement-id"] == advertisement.id)[0];
+            setChat(newchat);
+
+            if (displayChat) {
+                setTimeout(() => {
+                    let messageList = document.getElementById("detailsMessageList");
+                    if (messageList) {
+                        messageList.scrollTop = messageList?.scrollHeight!;
+                        messageList.scrollIntoView(true);
+                    }
+                }, 100);
+            }
+        }
+    }, [chats]);
 
     const handleDetailsClose = () => {
         setAd();
@@ -60,8 +72,8 @@ export const Details = ({ advertisement, setAd, contentToShow }: DetailsProps) =
     }
 
     const handleDeleteModalConfirm = () => {
-        // poke the agent
-
+        dispatch(deleteAd({ id: advertisement.id }));
+        setAd();
         setDisplayConfirmModal(false);
     };
 
@@ -70,31 +82,68 @@ export const Details = ({ advertisement, setAd, contentToShow }: DetailsProps) =
         let newmainimage = secondaryImagesCopy[secondaryImages.indexOf(e.currentTarget.dataset.value)];
         secondaryImagesCopy[secondaryImages.indexOf(e.currentTarget.dataset.value)] = mainImage;
 
-        setSecondaryImages(secondaryImagesCopy)
-        setMainImage(newmainimage)
+        setSecondaryImages(secondaryImagesCopy);
+        setMainImage(newmainimage);
     };
 
     const handleChatButtonClick = () => {
-        let detailsContainer = document.getElementById("detailsContainer")!;
-
         if (displayChat) {
-            setDisplayChat(false)
-            detailsContainer.scrollTop = 0;
-
-            detailsContainer.style.overflow = "hidden";
-            detailsContainer.style.overflowY = "hidden";
+            setDisplayChat(false);
+            scrollToTop();
         }
         else {
             setDisplayChat(true);
 
             setTimeout(() => {
-                let messageList = document.getElementById("detailsMessageList")!;
-                messageList.scrollTop = messageList?.scrollHeight!;
-                messageList.scrollIntoView(true);
+                let messageList = document.getElementById("detailsMessageList");
+                if (messageList) {
+                    messageList.scrollTop = messageList?.scrollHeight!;
+                    messageList.scrollIntoView(true);
+                }
             }, 100);
 
+            let detailsContainer = document.getElementById("detailsContainer");
+            if (detailsContainer) {
+                detailsContainer.style.overflow = "hidden";
+                detailsContainer.style.overflowY = "auto";
+            }
+        }
+    }
+
+    const scrollToTop = () => {
+        let detailsContainer = document.getElementById("detailsContainer");
+        if (detailsContainer) {
+            detailsContainer.scrollTop = 0;
             detailsContainer.style.overflow = "hidden";
-            detailsContainer.style.overflowY = "auto";
+        }
+    }
+
+    const handleInputChange = (e) => {
+        const { value } = e.target;
+        setInputMessage(value);
+    }
+
+    const handleSendMessage = () => {
+        if (inputMessage.trim().length == 0) return
+        api.poke(
+            {
+                app: 'classifieds',
+                mark: 'classifieds-action',
+                json: {
+                    'send-message': {
+                        'advertisement-id': advertisement.id,
+                        'to': advertisement.ship,
+                        'text': inputMessage,
+                    }
+                },
+            }
+        );
+        setInputMessage('');
+    }
+
+    const handleKeyPress = (e) => {
+        if (e.key == 'Enter') {
+            handleSendMessage();
         }
     }
 
@@ -111,11 +160,11 @@ export const Details = ({ advertisement, setAd, contentToShow }: DetailsProps) =
                         :
                         <Image src={'/apps/classifieds/assets/placeholder.png'} />
                     }
-                    <SecondaryImageColumn>
+                    <SecondaryImageRow>
                         {secondaryImages[0] && <SecondaryImage src={secondaryImages[0]} data-value={secondaryImages[0]} onClick={handleImageClick} />}
                         {secondaryImages[1] && <SecondaryImage src={secondaryImages[1]} data-value={secondaryImages[1]} onClick={handleImageClick} />}
                         {secondaryImages[2] && <SecondaryImage src={secondaryImages[2]} data-value={secondaryImages[2]} onClick={handleImageClick} />}
-                    </SecondaryImageColumn>
+                    </SecondaryImageRow>
                 </ImageColumn>
                 <InfoColumn>
                     <InfoBox>
@@ -177,7 +226,7 @@ export const Details = ({ advertisement, setAd, contentToShow }: DetailsProps) =
                             <ConversationReceiver>
                                 {
                                     sigil({
-                                        patp: '~fidwed-sipwyn',
+                                        patp: advertisement.ship,
                                         renderer: reactRenderer,
                                         size: 20,
                                         colors: ['white', 'black'],
@@ -190,11 +239,12 @@ export const Details = ({ advertisement, setAd, contentToShow }: DetailsProps) =
                             <ConversationAdTitle>{advertisement.title}</ConversationAdTitle>
                         </ConversationUpperRow>
                         <MessageList id='detailsMessageList'>
-                            {hardCodedChat.msgs.map((msg, index) =>
-                                msg.ship == hardCodedChat.ship ?
-                                    <SentMessage key={index}><MessageText>{msg.text}</MessageText><MessageDate>{msg.date.fromNow()}</MessageDate></SentMessage>
+                            {chat?.msgs.map((msg, index) =>
+                                msg.ship == "~" + api.ship ?
+                                    <SentMessage key={index}><MessageText>{msg.text}</MessageText><MessageDate>{daToDate(msg.date).fromNow()}</MessageDate></SentMessage>
                                     :
                                     <ReceivedMessage key={index}>
+                                        {/* {!(chat.msgs[index] && chat.msgs[index].ship != '~' + api.ship) && */}
                                         <SigilContainer>
                                             {
                                                 sigil({
@@ -207,7 +257,7 @@ export const Details = ({ advertisement, setAd, contentToShow }: DetailsProps) =
                                         </SigilContainer>
                                         <ReceivedMessageBox>
                                             <MessageText>{msg.text}</MessageText>
-                                            <MessageDate>{msg.date.fromNow()}</MessageDate>
+                                            <MessageDate>{daToDate(msg.date).fromNow()}</MessageDate>
                                         </ReceivedMessageBox>
                                     </ReceivedMessage>
                             )
@@ -215,8 +265,8 @@ export const Details = ({ advertisement, setAd, contentToShow }: DetailsProps) =
                         </MessageList>
                         <ConversationBottomRow >
                             <InputRow>
-                                <Input placeholder="Write your message" ></Input>
-                                <SendIcon />
+                                <Input placeholder="Write your message" onChange={handleInputChange} onKeyPress={handleKeyPress} value={inputMessage} />
+                                <SendIcon onClick={handleSendMessage} />
                             </InputRow>
                         </ConversationBottomRow>
                     </Conversation>}
