@@ -49,9 +49,9 @@ export const NotificationCard = styled.div`
 `;
 
 export const EmptyListMessage = styled.div`
-    font-size: .7rem;
+    font-size: .8rem;
     width: 100%;
-    padding: 1.5em;
+    padding: 1em;
 `;
 
 export const NotificationSigil = styled.div`

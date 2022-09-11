@@ -13,6 +13,19 @@ export interface Advertisement {
 
 export type Favorite = string;
 
+export interface Chat {
+    receiver: string,
+    "advertisement-id": string,
+    title?: string,
+    msgs: Message[]
+};
+
+export interface Message {
+    ship: string,
+    date: string,
+    text: string
+}
+
 export interface Notification {
     ship: string,
     text: string,

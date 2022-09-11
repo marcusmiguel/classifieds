@@ -22,12 +22,26 @@
             [%forward %b forward:ad]
             [%images %a (turn images:ad parse-img)]
         ==
-    ++  parse-img
-        |=  img=@t
-        [%s img]
     ++  parse-id
         |=  id=@uvH
         [%s (scot %uvh id)]
+    ++  parse-img
+        |=  img=@t
+        [%s img]
+    ++  parse-chat
+        |=  chat=chat
+        %-  pairs:enjs
+        :~  [%receiver %s (scot %p receiver:chat)]
+            [%advertisement-id %s (scot %uvh advertisement-id:chat)]
+            [%msgs %a (turn msgs:chat parse-msg)]
+        ==
+    ++  parse-msg
+        |=  msg=msg
+        %-  pairs:enjs
+        :~  [%ship %s (scot %p ship:msg)]
+            [%date %s (scot %da date:msg)]
+            [%text %s (crip text:msg)]
+        ==
     --
 ++  action
     |% 
@@ -38,7 +52,9 @@
     ++  client-action
         %-  of:dejs
         :~  [%publish-ad parse-ad]
+            [%delete-ad parse-id]
             [%toggle-favorite parse-id]
+            [%send-message parse-send-message]
         ==
     ++  parse-ad
         %-  ot:dejs
@@ -52,5 +68,33 @@
         %-  ot:dejs
         :~  [%id (se %uv):dejs]
         ==
+    ++  parse-send-message
+        %-  ot:dejs
+        :~  [%advertisement-id (se %uv):dejs]
+            [%to (se:dejs %p)]
+            [%text sa:dejs]
+        ==
     --
+++  chats
+  |%  
+  ++  to-json
+    |=  c=(list chat)
+    %-  pairs:enjs
+    :~  ['chats' %a (turn c parse-chat)]
+    ==
+  ++  parse-chat
+    |=  chat=chat
+    %-  pairs:enjs
+      :~  [%receiver %s (scot %p receiver:chat)]
+          [%advertisement-id %s (scot %uvh advertisement-id:chat)]
+          [%msgs %a (turn msgs:chat parse-msg)]
+      ==
+  ++  parse-msg
+    |=  msg=msg
+    %-  pairs:enjs
+      :~  [%ship %s (scot %p ship:msg)]
+          [%date %s (scot %da date:msg)]
+          [%text %s (crip text:msg)]
+      ==
+  --
 --

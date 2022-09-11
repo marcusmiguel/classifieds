@@ -11,14 +11,14 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks/hooks';
 import api from "../../api";
 
 interface ListProps {
-    ads: Advertisement[] | null,
+    listAds: Advertisement[] | null,
     contentToShow: string
-}
+};
 
-export const List = ({ ads, contentToShow }: ListProps) => {
+export const List = ({ listAds, contentToShow }: ListProps) => {
     const [currentAds, setCurrentAds] = useState<Advertisement[]>([]);
     const [forwardedAds, setForwardedAds] = useState<Advertisement[]>([]);
-    const { favorites } = useAppSelector((state) => state.advertisements.advertisements);
+    const { favorites } = useAppSelector((state) => state.classifieds.data);
 
     const [adToShow, setAdToShow] = useState<Advertisement>();
     const [adsQuery, setQuery] = useState('');
@@ -26,11 +26,10 @@ export const List = ({ ads, contentToShow }: ListProps) => {
     const [queriedAds, setQueriedAds] = useState<Advertisement[]>([]);
 
     useEffect(() => {
-        if (ads) {
-            setQueriedAds(ads)
+        if (listAds) {
+            setQueriedAds(listAds)
         }
-        console.log(ads)
-    }, [ads]);
+    }, [listAds]);
 
     useEffect(() => {
         setAdToShowById(adToShow?.id)
@@ -42,8 +41,8 @@ export const List = ({ ads, contentToShow }: ListProps) => {
     const [displayNotifications, setDisplayNotifications] = useState(false);
 
     let hardcodedNotifications: Notification[] = [];
-    if (ads && ads != null && ads?.length > 1) {
-        hardcodedNotifications = [{ ship: '~harlys-forbec', text: NotificationMessages.newForwardedAd, date: moment!.utc()!.format(), advertisementId: ads[0].id }, { ship: '~fidwed-sipwyn', text: NotificationMessages.newMessage, date: moment!.utc()!.format(), advertisementId: ads[1].id }]
+    if (listAds && listAds != null && listAds?.length > 1) {
+        hardcodedNotifications = [{ ship: '~harlys-forbec', text: NotificationMessages.newForwardedAd, date: moment!.utc()!.format(), advertisementId: listAds[0].id }, { ship: '~fidwed-sipwyn', text: NotificationMessages.newMessage, date: moment!.utc()!.format(), advertisementId: listAds[1].id }]
     }
     const [unreadNotifications, setUnreadNotifications] = useState(hardcodedNotifications);
 
@@ -61,8 +60,8 @@ export const List = ({ ads, contentToShow }: ListProps) => {
     };
 
     const setAdToShowById = (id) => {
-        let ad = ads?.filter(x => x.id == id)!;
-        setAdToShow(ad[0]);
+        let ad = listAds?.filter(x => x.id == id)[0];
+        setAdToShow(ad);
     }
 
     useEffect(() => {
@@ -72,12 +71,12 @@ export const List = ({ ads, contentToShow }: ListProps) => {
 
     useEffect(() => {
         let queryIsEmpty = adsQuery.trim().length == 0;
-        if (ads == null || ads?.length == 0) return;
+        if (listAds == null || listAds?.length == 0) return;
 
-        let newAds = [...ads];
+        let newAds = [...listAds];
 
         if (dropdownContent == 'Favorites' && favorites) {
-            newAds = ads?.filter(x => x.isFavorited);
+            newAds = listAds?.filter(x => x.isFavorited);
         }
         if (dropdownContent == 'Forwarded') {
             newAds = forwardedAds;
@@ -135,7 +134,7 @@ export const List = ({ ads, contentToShow }: ListProps) => {
                                 colors: ['white', 'black'],
                             })
                         }
-                        <ShipName>{api.ship}</ShipName>
+                        <ShipName>~{api.ship}</ShipName>
                     </UserInfo>
                     {displayNotifications && <NotificationsModal notifications={unreadNotifications} setDisplayNotifications={setDisplayNotifications} setAdToShowById={setAdToShowById} setNotifications={setUnreadNotifications}></NotificationsModal>}
                 </UserInfoContainer>
@@ -164,7 +163,7 @@ export const List = ({ ads, contentToShow }: ListProps) => {
             <ListContainer>
                 {renderTitle()}
                 <ListGrid>
-                    {ads && ads.length > 0 ?
+                    {listAds && listAds.length > 0 ?
                         (
                             (queriedAds?.length == 0) ?
                                 <div>No results found.</div>

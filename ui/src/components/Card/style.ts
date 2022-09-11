@@ -99,6 +99,7 @@ export const Title = styled.div`
     height: 100%;
     width: 100%;
     text-align: justify;
+    word-break: break-all;
     overflow: hidden;
 `;
 

@@ -28,6 +28,7 @@ export const Title = styled.span`
     font-weight: 900;
     line-height: 1;
     max-height: 25%;
+    word-break: break-all;
 `;
 
 export const Tags = styled.div`
@@ -355,6 +356,7 @@ export const SentMessage = styled.div`
     padding: .5em 1em;
     margin-bottom: .5rem;
     background: rgba(0, 0, 0, .015);
+    line-height: 1;
 
     &:last-child{
         margin-bottom: 0em;
@@ -370,6 +372,7 @@ export const ReceivedMessage = styled.div`
     margin-bottom: .5rem;
     display: flex;
     max-width: 60%;
+    line-height: 1;
 
     &:last-child{
         margin-bottom: 0;
@@ -396,6 +399,7 @@ export const MessageText = styled.div`
     font-size: .65rem;
     line-height: 1;
     margin-bottom: .3em;
+    word-break: break-all;
 `;
 
 export const MessageDate = styled.div`

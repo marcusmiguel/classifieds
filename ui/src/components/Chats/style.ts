@@ -4,10 +4,9 @@ import styled from 'styled-components';
 export const ChatContainer = styled.div`
     padding: 1.5em 1.5em;
     margin-left: 16%;
-    width: 100%;
-    height: 100%;
+    // width: 100%;
+    // height: 100%;
     background: rgba(253,253,253,1);
-
 `;
 
 export const ChatTitle = styled.div`
@@ -18,19 +17,20 @@ export const ChatTitle = styled.div`
 
 export const ChatSection = styled.div`
     display: flex;
-    flex-direction: row;
     height: 100%;
+    width: 100%;
     background: rgba(253,253,253,1);
 `;
 
 export const ChatList = styled.div`
-    width: 40%;
+    width: 17rem;
     height: 100%;
 `;
 
 export const ChatCard = styled.div`
     border-radius: .25rem;
     width: 100%;
+    height: 5rem;
     display: flex;
     flex-direction: column;
     box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px; 
@@ -138,6 +138,7 @@ export const SentMessage = styled.div`
     padding: .5em 1em;
     margin-bottom: .5rem;
     background: rgba(0, 0, 0, .015);
+    line-height: 1;
 
     &:last-child{
         margin-bottom: 0em;
@@ -146,14 +147,15 @@ export const SentMessage = styled.div`
 
 export const SigilContainer = styled.div`
     margin-right: .3em;
+    padding-top: .3em;
 `;
-
 
 export const ReceivedMessage = styled.div`
     align-self: start;
     margin-bottom: .5rem;
     display: flex;
     max-width: 60%;
+    line-height: 1;
 
     &:last-child{
         margin-bottom: 0;
@@ -180,6 +182,7 @@ export const MessageText = styled.div`
     font-size: .65rem;
     line-height: 1;
     margin-bottom: .3em;
+    word-break: break-all;
 `;
 
 export const MessageDate = styled.div`
@@ -210,13 +213,14 @@ export const Input = styled.input`
 
 export const SendIcon = styled(RiSendPlane2Line)`
     position: absolute;
-    right: 1.5em;
+    right: 2em;
     cursor: pointer;
+    font-size:.8rem;
 `;
 
 export const CardAdTitle = styled.div`
     font-size: .7rem;
-    padding: 0 2.1em;
+    padding: 0 2.2em;
     margin-bottom: .5em;
     font-weight: 900;
 `;
