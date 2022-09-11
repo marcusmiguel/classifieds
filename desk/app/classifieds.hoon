@@ -71,9 +71,13 @@
         =/  exists  (find ~[id.act] (turn myads |=(=advertisement id.advertisement)))
         ?~  exists
           ~|((weld "No ad with id " (scow %uv id.act)) !!)
-        =/  myads-new  (oust [u.exists 1] myads)
-        :_  this(myads myads-new)
-        [(invent:gossip %classifieds-initial-ads !>([now.bowl myads-new]))]~
+        =/  myads-new    (oust [u.exists 1] myads)
+        =/  ads-to-list  (zing ~(val by ads))
+        :-  [(invent:gossip %classifieds-initial-ads !>([now.bowl myads-new]))]~
+        %=  this 
+          myads      myads-new
+          chats      (update-chats:hc [(weld myads-new `(list advertisement)`ads-to-list) chats]) 
+        ==
         ::
           %toggle-favorite
         ?>  =(our.bowl src.bowl)
@@ -127,25 +131,28 @@
   ^-  (quip card _this)
   ?:  ?=([%http-response *] path)  [~ this]
   ?+    path  (on-watch:def path)
-      [%~.~ %gossip %source ~]
-    ?>  (~(has in get-mutuals:hc) src.bowl)
-    :_  this
-    :~  [%give %fact ~ %classifieds-initial-ads !>([now.bowl myads])]
-    ==
-      [%chats ~]
-    ?>  =(our.bowl src.bowl)
-    :_  this
-    :~  [%give %fact ~ %classifieds-chats !>(chats)]
-    ==
+    ::
+        [%~.~ %gossip %source ~]
+      ?>  (~(has in get-mutuals:hc) src.bowl)
+      :_  this
+      :~  [%give %fact ~ %classifieds-initial-ads !>([now.bowl myads])]
+      ==
+    ::
+        [%chats ~]
+      ?>  =(our.bowl src.bowl)
+      :_  this
+      :~  [%give %fact ~ %classifieds-chats !>(chats)]
+      ==
+    ::
   ==
 ::
 ++  on-peek 
   |=  =path
   ^-  (unit (unit cage))
   ?+  path  (on-peek:def path)
-    [%x %state ~]  ``classifieds-state+!>(state)
+    [%x %state ~]      ``classifieds-state+!>(state)
     [%x %favorites ~]  ``noun+!>(favorites)
-    [%x %our-ads ~]  ``classifieds-advertisements+!>(myads)
+    [%x %our-ads ~]    ``classifieds-advertisements+!>(myads)
   ==
 ::
 ++  on-agent
@@ -155,13 +162,26 @@
       ==
     (on-agent:def wire sign)
   ?+  p.cage.sign  (on-agent:def wire sign)
-    %classifieds-initial-ads  :: will overwrite all the previous ads from that ship
-      =/  newads  !<(initial-ads q.cage.sign)
-      `this(ads (~(gas by ads) ~[[src.bowl +.newads]]), favorites (update-favorites:hc [+.newads favorites]), chats (update-chats:hc [+.newads chats]))
-    %classifieds-advertisement :: will add the new ad to map
-      =/  newad  !<(advertisement q.cage.sign)
+    ::
+    %classifieds-initial-ads  ::  will overwrite all the previous ads from that ship
+      =/  payload          !<(initial-ads q.cage.sign)
+      =/  new-ads-map      (~(gas by ads) ~[[src.bowl +.payload]])
+      =/  new-ads-to-list  (zing ~(val by new-ads-map))
+      :-  ~
+      %=  this  
+        ads        new-ads-map
+        favorites  (update-favorites:hc [new-ads-to-list favorites])
+        chats      (update-chats:hc [(weld myads `(list advertisement)`new-ads-to-list) chats])
+      ==
+    ::
+    %classifieds-advertisement   ::  will add the new ad to map
+      =/  newad    !<(advertisement q.cage.sign)
       =/  newlist  (weld (~(got by ads) src.bowl) [newad ~])
-      `this(ads (~(gas by ads) ~[[src.bowl newlist]]))
+      :-  ~
+      %=  this  
+        ads     (~(gas by ads) ~[[src.bowl newlist]])
+      ==  
+    ::
   ==
 ::  
 ++  on-fail   on-fail:def
