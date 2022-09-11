@@ -9,6 +9,8 @@
 ::
 +$  advertisement 
     $:
+::    TODO: maybe the `ship` field should go: If
+::    we keep the `publisher` field in `ad-catalog` it becomes  redundant
       =ship 
       id=@uvH 
       date=@da 
@@ -23,7 +25,7 @@
 :: This is of particular importance for broadcasting empty lists of
 :: `advertisement`s more than once (e.g. after an agent got `|nuke`d).
 ::
-+$  ad-catalog  [timestamp=@da (list advertisement)]  
++$  ad-catalog  [publisher=ship timestamp=@da ads=(list advertisement)]  
 +$  favorite  [id=@uvH]
 +$  state-0
   $:  %0

@@ -61,9 +61,21 @@
         ::
           %publish-ad
         ?>  =(our.bowl src.bowl)
-        =/  ad  [our.bowl (sham eny.bowl) now.bowl forward.act title.act desc.act price.act images.act]
-        :_  this(myads (weld myads ~[ad])) 
-        [(invent:gossip %classifieds-advertisement !>(ad))]~
+        =/  ad  
+          :*
+            ship=our.bowl
+            id=(sham eny.bowl) 
+            date=now.bowl 
+            forward=forward.act 
+            title=title.act 
+            desc=desc.act 
+            price=price.act 
+            images=images.act
+          ==
+        =/  myads-new  (weld myads ~[ad])
+        :_  this(myads myads-new) 
+::        [(invent:gossip %classifieds-advertisement !>(ad))]~
+        [(invent:gossip %classifieds-ad-catalog !>([our.bowl now.bowl myads-new]))]~
         ::
           %delete-ad
         ?>  =(our.bowl src.bowl)
@@ -72,7 +84,7 @@
           ~|((weld "No ad with id " (scow %uv id.act)) !!)
         =/  myads-new  (oust [u.exists 1] myads)
         :_  this(myads myads-new)
-        [(invent:gossip %classifieds-ad-catalog !>([now.bowl myads-new]))]~
+        [(invent:gossip %classifieds-ad-catalog !>([our.bowl now.bowl myads-new]))]~
         ::
           %toggle-favorite
         ?>  =(our.bowl src.bowl)
@@ -100,7 +112,7 @@
   ?.  =(/~/gossip/source path)
     (on-watch:def path)
   :_  this
-  [%give %fact ~ %classifieds-ad-catalog !>([now.bowl myads])]~
+  [%give %fact ~ %classifieds-ad-catalog !>([publisher=our.bowl timestamp=now.bowl ads=myads])]~
 ::
 ++  on-peek 
   |=  =path
@@ -113,18 +125,32 @@
 ::
 ++  on-agent
   |=  [=wire =sign:agent:gall]
+  ^-  (quip card _this)
   ?.  ?&  =(/~/gossip/gossip wire)
           ?=(%fact -.sign)
       ==
     (on-agent:def wire sign)
   ?+  p.cage.sign  (on-agent:def wire sign)
     %classifieds-ad-catalog  :: will overwrite all the previous ads from that ship
-      =/  newads  !<(ad-catalog q.cage.sign)
-      `this(ads (~(gas by ads) ~[[src.bowl +.newads]]), favorites (update-favorites:hc [+.newads favorites]))
-    %classifieds-advertisement :: will add the new ad to map
-      =/  newad  !<(advertisement q.cage.sign)
-      =/  newlist  (weld (~(got by ads) src.bowl) [newad ~])
-      `this(ads (~(gas by ads) ~[[src.bowl newlist]]))
+      =/  catalog  !<(ad-catalog q.cage.sign)
+      ?:  =(publisher.catalog our.bowl)  (on-agent:def wire sign)
+      =/  ads-new  (~(gas by ads) [publisher.catalog ads.catalog]~)
+      =/  favs-new  (update-favorites:hc [ads.catalog favorites])
+      :_  this(ads ads-new, favorites favs-new)
+      ?.  =(publisher.catalog src.bowl)
+      :: TODO: check if src.bowl of a forward is a %pals mutal. If yes, ignore the
+      :: incoming catalog
+      ::
+        ~
+      =/  forwards  ^-  (list advertisement)  
+          (skim ads.catalog |=(ad=advertisement forward.ad))
+      =/  forward-catalog  catalog(ads forwards) 
+      [(invent:gossip %classifieds-ad-catalog !>(forward-catalog))]~
+::
+::    %classifieds-advertisement :: will add the new ad to map
+::      =/  newad  !<(advertisement q.cage.sign)
+::      =/  newlist  (weld (~(got by ads) src.bowl) [newad ~])
+::      `this(ads (~(gas by ads) ~[[src.bowl newlist]]))
   ==
 ::  
 ++  on-fail   on-fail:def
