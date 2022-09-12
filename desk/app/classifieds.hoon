@@ -110,14 +110,14 @@
         ?:  =(index ~)
           =/  new-chats  (weld chats `(list chat)`~[[receiver=to.act advertisement-id=`ad-id`advertisement-id.act msgs=[new-msg ~]]])
           :_  this(chats new-chats)
-          :~  [%pass /chat/(scot %p to.act)/(scot %uvh advertisement-id.act) %agent [to.act %classifieds] %poke %classifieds-action !>([%receive-message advertisement-id=`ad-id`advertisement-id.act msg=new-msg])]
+          :~  [%pass /chat/(scot %p to.act)/(scot %uv advertisement-id.act) %agent [to.act %classifieds] %poke %classifieds-action !>([%receive-message advertisement-id=`ad-id`advertisement-id.act msg=new-msg])]
               [%give %fact ~[/chats] %classifieds-chats !>(new-chats)]
           ==  
         =/  old-chat       (snag +.index chats)
         =/  modified-chat  [receiver=receiver.old-chat advertisement-id=advertisement-id.old-chat msgs=(weld msgs.old-chat ~[new-msg])]
         =/  new-chats  (snap chats +.index modified-chat)
         :_  this(chats new-chats)
-        :~  [%pass /chat/(scot %p to.act)/(scot %uvh advertisement-id.act) %agent [to.act %classifieds] %poke %classifieds-action !>([%receive-message advertisement-id=`ad-id`advertisement-id.act msg=new-msg])]
+        :~  [%pass /chat/(scot %p to.act)/(scot %uv advertisement-id.act) %agent [to.act %classifieds] %poke %classifieds-action !>([%receive-message advertisement-id=`ad-id`advertisement-id.act msg=new-msg])]
             [%give %fact ~[/chats] %classifieds-chats !>(new-chats)]
         ==
         ::
