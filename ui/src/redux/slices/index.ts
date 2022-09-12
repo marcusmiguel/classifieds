@@ -1,1 +1,1 @@
-export { default as advertisementsReducer } from "./advertisementsSlice";
+export { default as classifiedsReducer } from './classifiedsSlice';

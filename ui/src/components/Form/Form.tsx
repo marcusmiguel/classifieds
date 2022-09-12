@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import api from "../../api";
-import { AddedImage, AddedImageContainer, AddedImagesRow, AddIcon, AddImageButton, AddImageRow, FormContainer, FormTitle, Input, Label, RadioInput, RemoveImage, SelectRow, SubmitButton, SubmitIcon, TextArea, UrlInput } from "./style";
+import { AddedImage, AddedImageContainer, AddedImagesRow, AddIcon, AddImageButton, AddImageRow, ErrorMessage, FormContainer, FormTitle, Input, Label, RadioInput, RemoveImage, SelectRow, SubmitButton, SubmitIcon, TextArea, UrlInput } from "./style";
 
 interface formValues {
   title: string,
@@ -12,11 +12,34 @@ interface formValues {
 
 export const Form = () => {
   const [formValues, setFormValues] = useState<formValues>({ title: '', desc: '', tags: [], price: 0, images: [] });
+  const [formErrors, setFormErrors] = useState({ title: "", });
+
   const [inputUrl, setInputUrl] = useState('');
   const [disableAdImages, setDisableAdImages] = useState(false);
-  const [selectedOption, setSelectedOption] = useState(true)
+  const [selectedOption, setSelectedOption] = useState(true);
 
-  const handleButtonClick = () => {
+  const handleSubmitButtonClick = (e) => {
+    e.preventDefault();
+    validate();
+  }
+
+  const validate = () => {
+    const errors = { title: "" };
+    var error = false;
+
+    if (formValues.title.trim().length == 0) {
+      errors.title = "Title cannot be blank.";
+      error = true;
+    }
+
+    setFormErrors(errors);
+    if (!error) {
+      submitForm();
+    }
+  }
+
+  const submitForm = () => {
+
     api.poke(
       {
         app: 'classifieds',
@@ -25,7 +48,7 @@ export const Form = () => {
           'publish-ad': {
             'title': formValues.title,
             'desc': formValues.desc,
-            'price': formValues.price + '',
+            'price': +formValues.price + '',
             'forward': selectedOption,
             'images': formValues.images
           }
@@ -33,12 +56,25 @@ export const Form = () => {
       }
     );
     setFormValues({ title: '', desc: '', price: 0, tags: [], images: [] });
+    setInputUrl('');
   };
 
   const handleChange = (e) => {
     const { id, value } = e.target;
+
+    if (id == 'price' && value < 0)
+      return;
+    if (id == 'price') {
+      var t = value.slice(0, 8);
+      setFormValues({ ...formValues, [id]: (t.indexOf(".") >= 0) ? (t.substr(0, t.indexOf(".")) + t.substr(t.indexOf("."), 3)) : t });
+      return;
+    }
+    if (id == 'title')
+      setFormErrors({ title: "", });
+
     setFormValues({ ...formValues, [id]: value });
   };
+
 
   const handleUrlChange = (e) => {
     const { value } = e.target;
@@ -57,6 +93,7 @@ export const Form = () => {
       document!.getElementById('add-image-button')!.click();
     }
   }
+
   useEffect(() => {
     if (formValues.images.length >= 4) {
       setDisableAdImages(true);
@@ -81,13 +118,16 @@ export const Form = () => {
         type="text"
         value={formValues.title}
         id='title'
+        maxLength={100}
       />
+      <ErrorMessage>{formErrors.title}</ErrorMessage>
       <Label>Price</Label>
       <Input
         onChange={handleChange}
-        type="number"
+        type='number'
         value={formValues.price}
         id='price'
+        min='0'
       />
       <Label>Allow forwarding?</Label>
       <SelectRow>
@@ -137,8 +177,9 @@ export const Form = () => {
         onChange={handleChange}
         value={formValues.desc}
         id='desc'
+        maxLength={200}
       />
-      <SubmitButton onClick={handleButtonClick}><SubmitIcon />Submit</SubmitButton>
+      <SubmitButton onClick={handleSubmitButtonClick}><SubmitIcon />Submit</SubmitButton>
     </FormContainer >
   );
 }

@@ -11,6 +11,7 @@ export const FormContainer = styled.div`
     height: 100%;
     background: rgba(253,253,253,1);
     overflow: hidden;
+    width: 20%;
 `;
 
 export const FormTitle = styled.div`
@@ -20,12 +21,24 @@ export const FormTitle = styled.div`
     margin-bottom: .1em;
 `;
 
+export const ErrorMessage = styled.div`
+    color: #DF5150;
+    font-size: .6rem;
+    width: 100%;
+    display: flex;
+    justify-content: start;
+    line-height: 1;
+    padding-top: .2em;
+    margin-bottom: -.8em;
+    height: .6rem;
+`;
+
 export const Label = styled.label`
     width: 100%;
     margin-bottom: .5em;
     font-weight: 700;
     font-size: .7rem;
-    margin-top: 1em;
+    margin-top: 1.2em;
 `;
 
 export const Input = styled.input`
@@ -56,6 +69,7 @@ interface AddImageProps {
 
 export const AddImageRow = styled.div`
     display: flex;
+    width: 100%;
 `;
 
 export const AddImageButton = styled.button<AddImageProps>`

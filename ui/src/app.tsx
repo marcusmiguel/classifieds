@@ -1,15 +1,18 @@
 import React, { useEffect } from 'react';
 import { Router, Routes, Route, BrowserRouter } from 'react-router-dom';
+import api from './api';
 import { Home } from './pages/'
 import { useAppDispatch, useAppSelector } from './redux/hooks/hooks';
-import { loadAds } from './redux/slices/advertisementsSlice';
+import { loadState } from './redux/slices/classifiedsSlice';
 
 export function App() {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(loadAds());
+    dispatch(loadState());
     document.body.style.overflowX = "hidden";
+    document.body.style.overflowY = "auto";
+
   }, []);
 
   return (
