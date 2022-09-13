@@ -17,7 +17,7 @@
 =|  state-0
 =*  state  -
 %-  %+  agent:gossip
-      [1 %mutuals %mutuals]
+      [2 %anybody %anybody]
     %-  malt
     ^-  (list [mark $-(* vase)])
     :~  [%classifieds-advertisement |=(n=* !>((grab-ad n)))]
@@ -182,16 +182,17 @@
       =/  ads-new-list  `(list advertisement)`(zing ~(val by ads-new))
       =/  favs-new  (update-favorites:hc [ads.catalog favorites])
       =/  chats-new  (update-chats:hc [(weld myads ads-new-list) chats])
-      :_  this(ads ads-new, favorites favs-new, chats chats-new)
-      ?.  =(publisher.catalog src.bowl)
-      :: TODO: check if src.bowl of a forward is a %pals mutal. If yes, ignore the
-      :: incoming catalog
-      ::
-        ~
-      =/  forwards  ^-  (list advertisement)  
-          (skim ads.catalog |=(ad=advertisement forward.ad))
-      =/  forward-catalog  catalog(ads forwards) 
-      [(invent:gossip %classifieds-ad-catalog !>(forward-catalog))]~
+      `this(ads ads-new, favorites favs-new, chats chats-new)
+::      :_  this(ads ads-new, favorites favs-new, chats chats-new)
+::      ?.  =(publisher.catalog src.bowl)
+::      :: TODO: check if src.bowl of a forward is a %pals mutal. If yes, ignore the
+::      :: incoming catalog
+::      ::
+::        ~
+::      =/  forwards  ^-  (list advertisement)  
+::          (skim ads.catalog |=(ad=advertisement forward.ad))
+::      =/  forward-catalog  catalog(ads forwards) 
+::      [(invent:gossip %classifieds-ad-catalog !>(forward-catalog))]~
     ::
 ::    %classifieds-advertisement   ::  will add the new ad to map
 ::      =/  newad    !<(advertisement q.cage.sign)
