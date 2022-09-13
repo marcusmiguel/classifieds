@@ -21,7 +21,7 @@
   ==
 :: TODO: change those tapes to @t?
 ::
-+$  ad-id  @uvH
++$  ad-id  @uv
 +$  advertisement 
     $:
       =ship 
