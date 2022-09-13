@@ -14,7 +14,7 @@
         |=  ad=advertisement
         %-  pairs:enjs  
         :~  [%ship %s (scot %p ship:ad)]
-            [%id %s (scot %uvh id:ad)]
+            [%id %s (scot %uv id:ad)]
             [%date %s (scot %da date:ad)]
             [%title %s (crip title:ad)]
             [%desc %s (crip desc:ad)]
@@ -24,7 +24,7 @@
         ==
     ++  parse-id
         |=  id=@uvH
-        [%s (scot %uvh id)]
+        [%s (scot %uv id)]
     ++  parse-img
         |=  img=@t
         [%s img]
@@ -32,7 +32,7 @@
         |=  chat=chat
         %-  pairs:enjs
         :~  [%receiver %s (scot %p receiver:chat)]
-            [%advertisement-id %s (scot %uvh advertisement-id:chat)]
+            [%advertisement-id %s (scot %uv advertisement-id:chat)]
             [%msgs %a (turn msgs:chat parse-msg)]
         ==
     ++  parse-msg
@@ -86,7 +86,7 @@
     |=  chat=chat
     %-  pairs:enjs
       :~  [%receiver %s (scot %p receiver:chat)]
-          [%advertisement-id %s (scot %uvh advertisement-id:chat)]
+          [%advertisement-id %s (scot %uv advertisement-id:chat)]
           [%msgs %a (turn msgs:chat parse-msg)]
       ==
   ++  parse-msg

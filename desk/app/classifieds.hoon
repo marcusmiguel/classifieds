@@ -79,6 +79,22 @@
           chats      (update-chats:hc [(weld myads-new `(list advertisement)`ads-to-list) chats]) 
         ==
         ::
+          %update-ad
+        ?>  =(our.bowl src.bowl)
+        =/  local-ind  (need (find ~[id.act] (turn myads |=(=advertisement id.advertisement))))
+        =/  ad-old  (snag local-ind myads)
+        =/  ad-new 
+        %_  ad-old 
+          forward  (fall forward.act forward.ad-old)
+          title  (fall title.act title.ad-old)
+          desc  (fall desc.act desc.ad-old)
+          price  (fall price.act price.ad-old)
+          images  (fall images.act images.ad-old)
+        ==
+        =/  myads-new  (snap myads local-ind ad-new)
+        :-  [(invent:gossip %classifieds-initial-ads !>([now.bowl myads-new]))]~
+        this(myads myads-new)
+        ::
           %toggle-favorite
         ?>  =(our.bowl src.bowl)
         =/  exists  (find ~[id.act] favorites)
@@ -92,16 +108,16 @@
         =/  new-msg   [ship=our.bowl date=now.bowl text=text.act]
         =/  index     (find ~[advertisement-id.act] (turn chats |=(=chat advertisement-id.chat)))
         ?:  =(index ~)
-          =/  new-chats  (weld chats `(list chat)`~[[receiver=to.act advertisement-id=`@uvH`advertisement-id.act msgs=[new-msg ~]]])
+          =/  new-chats  (weld chats `(list chat)`~[[receiver=to.act advertisement-id=`ad-id`advertisement-id.act msgs=[new-msg ~]]])
           :_  this(chats new-chats)
-          :~  [%pass /chat/(scot %p to.act)/(scot %uvh advertisement-id.act) %agent [to.act %classifieds] %poke %classifieds-action !>([%receive-message advertisement-id=`@uvH`advertisement-id.act msg=new-msg])]
+          :~  [%pass /chat/(scot %p to.act)/(scot %uv advertisement-id.act) %agent [to.act %classifieds] %poke %classifieds-action !>([%receive-message advertisement-id=`ad-id`advertisement-id.act msg=new-msg])]
               [%give %fact ~[/chats] %classifieds-chats !>(new-chats)]
           ==  
         =/  old-chat       (snag +.index chats)
         =/  modified-chat  [receiver=receiver.old-chat advertisement-id=advertisement-id.old-chat msgs=(weld msgs.old-chat ~[new-msg])]
         =/  new-chats  (snap chats +.index modified-chat)
         :_  this(chats new-chats)
-        :~  [%pass /chat/(scot %p to.act)/(scot %uvh advertisement-id.act) %agent [to.act %classifieds] %poke %classifieds-action !>([%receive-message advertisement-id=`@uvH`advertisement-id.act msg=new-msg])]
+        :~  [%pass /chat/(scot %p to.act)/(scot %uv advertisement-id.act) %agent [to.act %classifieds] %poke %classifieds-action !>([%receive-message advertisement-id=`ad-id`advertisement-id.act msg=new-msg])]
             [%give %fact ~[/chats] %classifieds-chats !>(new-chats)]
         ==
         ::
