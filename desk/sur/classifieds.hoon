@@ -24,6 +24,8 @@
 +$  ad-id  @uv
 +$  advertisement 
     $:
+::    TODO: maybe the `ship` field should go: If
+::    we keep the `publisher` field in `ad-catalog` it becomes  redundant
       =ship 
       id=ad-id
       date=@da 
@@ -33,9 +35,12 @@
       price=tape 
       images=(list @t)
     ==
-:: needs @da timestamp to make it unique, otherwise gossip will not propagate this if we send the same list twice.
+:: An `ad-catalog` is a timestamped list of `advertisement`s.
+:: The @da timestamp to makes it unique, otherwise gossip will not propagate this if we send the same list twice.
+:: This is of particular importance for broadcasting empty lists of
+:: `advertisement`s more than once (e.g. after an agent got `|nuke`d).
 ::
-+$  initial-ads  [timestamp=@da (list advertisement)]  
++$  ad-catalog  [publisher=ship timestamp=@da ads=(list advertisement)]  
 +$  favorite     [id=ad-id]
 +$  chat         [receiver=ship advertisement-id=ad-id msgs=(list msg)]
 +$  msg          [ship=ship date=@da text=tape]
