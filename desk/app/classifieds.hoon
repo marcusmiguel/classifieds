@@ -114,7 +114,6 @@
         ::
           %send-message
         ?>  =(our.bowl src.bowl)
-        ?>  (~(has in get-mutuals:hc) to.act)
         =/  new-msg   [ship=our.bowl date=now.bowl text=text.act]
         =/  index     (find ~[advertisement-id.act] (turn chats |=(=chat advertisement-id.chat)))
         ?:  =(index ~)
@@ -132,7 +131,6 @@
         ==
         ::
           %receive-message
-        ?>  (~(has in get-mutuals:hc) src.bowl)
         =/  index  (find ~[advertisement-id.act] (turn chats |=(=chat advertisement-id.chat)))
         ?:  =(index ~) 
           `this(chats (weld chats `(list chat)`~[[receiver=src.bowl advertisement-id=advertisement-id.act msgs=[msg.act ~]]]))
