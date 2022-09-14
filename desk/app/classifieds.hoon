@@ -17,7 +17,7 @@
 =|  state-0
 =*  state  -
 %-  %+  agent:gossip
-      [2 %anybody %anybody]
+      [2 %mutuals %mutuals]
     %-  malt
     ^-  (list [mark $-(* vase)])
     :~  [%classifieds-advertisement |=(n=* !>((grab-ad n)))]
@@ -102,7 +102,7 @@
           images  (fall images.act images.ad-old)
         ==
         =/  myads-new  (snap myads local-ind ad-new)
-        :-  [(invent:gossip %classifieds-initial-ads !>([now.bowl myads-new]))]~
+        :-  [(invent:gossip %classifieds-ad-catalog !>([our.bowl now.bowl myads-new]))]~
         this(myads myads-new)
         ::
           %toggle-favorite
@@ -191,9 +191,6 @@
   ?+  p.cage.sign  (on-agent:def wire sign)
     %classifieds-ad-catalog  :: will overwrite all the previous ads from that ship
       =/  catalog  !<(ad-catalog q.cage.sign)
-      ::  Do not process our own ads that get forwarded back to us
-      ::
-      ?:  =(publisher.catalog our.bowl)  (on-agent:def wire sign)
       =/  ads-new  (~(gas by ads) [publisher.catalog ads.catalog]~)
       =/  ads-new-list  `(list advertisement)`(zing ~(val by ads-new))
       =/  favs-new  (update-favorites:hc [ads.catalog favorites])
