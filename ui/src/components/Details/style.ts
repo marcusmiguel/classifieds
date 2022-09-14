@@ -1,4 +1,4 @@
-import { RiDeleteBinLine, RiShareForwardLine, RiStarLine, RiCloseFill, RiSendPlane2Fill, RiSendPlane2Line, RiStarFill } from 'react-icons/ri';
+import { RiDeleteBinLine, RiShareForwardLine, RiStarLine, RiCloseFill, RiSendPlane2Fill, RiSendPlane2Line, RiStarFill, RiEditLine } from 'react-icons/ri';
 import { BiChat } from 'react-icons/bi';
 import styled, { keyframes } from 'styled-components';
 import { MdNavigateNext } from 'react-icons/md';
@@ -257,6 +257,23 @@ export const DeleteButton = styled.button`
     color: white;
 `;
 
+export const EditButton = styled.button`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 8em;
+    padding: .5em .5em;
+    border-radius: .25rem;
+    font-size: .64rem;
+    font-weight: 700;
+    background: white;
+    color: black;
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px; 
+    margin-right: 1em;
+    z-index: 110;
+
+`;
+
 export const ChatButton = styled.button`
     display: flex;
     justify-content: center;
@@ -278,6 +295,11 @@ export const ForwardIcon = styled(RiShareForwardLine)`
 `;
 
 export const DeleteIcon = styled(RiDeleteBinLine)`
+    margin-right: .3em;
+    font-size: .9rem;
+`;
+
+export const EditIcon = styled(RiEditLine)`
     margin-right: .3em;
     font-size: .9rem;
 `;
@@ -436,7 +458,7 @@ export const SendIcon = styled(RiSendPlane2Line)`
 
 export const ConversationAdTitle = styled.div`
     font-size: .7rem;
-    padding: 0 2.6em;
+    padding: 0 1em;
     font-weight: 900;
     height: 1rem;
     text-overflow: ellipsis;

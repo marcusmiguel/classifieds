@@ -1,12 +1,12 @@
 |%
 +$  action
-  $%
+  $%  
     [%publish-ad title=tape desc=tape forward=? price=tape images=(list @t)]
     :: update an ad identified by `id`
     :: `id` and `timestamp` cannot be modifed
     :: `~` will leave the original value unchanged
     ::
-    $:  %update-ad
+    $:  %edit-ad
       id=ad-id 
       title=(unit tape) 
       desc=(unit tape) 

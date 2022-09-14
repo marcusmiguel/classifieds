@@ -5,7 +5,7 @@ import api from "../../api";
 import { useAppSelector } from "../../redux/hooks/hooks";
 import { Chat } from "../../types";
 import { daToDate } from "../../util";
-import { ChatCard, ChatContainer, ChatList, ChatSection, ChatTitle, Conversation, MessageList, InputRow, Input, SendIcon, MessagePreview, Date, CardReceiver, CardReceiverShip, ConversationReceiver, ConversationReceiverShip, ConversationAdTitle, CardAdTitle, ReceivedMessage, SentMessage, MessageText, MessageDate, CardUpperRow, ConversationUpperRow, ConversationBottomRow, MessageShip, ReceivedMessageBox, SigilContainer, EmptyListMessage } from "./style";
+import { ChatCard, ChatContainer, ChatList, ChatSection, ChatTitle, Conversation, MessageList, InputRow, Input, SendIcon, MessagePreview, CardReceiver, CardReceiverShip, ConversationReceiver, ConversationReceiverShip, ConversationAdTitle, CardAdTitle, ReceivedMessage, SentMessage, MessageText, MessageDate, CardUpperRow, ConversationUpperRow, ConversationBottomRow, MessageShip, ReceivedMessageBox, SigilContainer, EmptyListMessage, CardSigil, CardDate } from "./style";
 
 export const Chats = () => {
     const [inputMessage, setInputMessage] = useState('');
@@ -83,28 +83,29 @@ export const Chats = () => {
                 <ChatSection>
                     <ChatList>
                         {chatsToDisplay.map((chat, index) =>
-                            <ChatCard key={index} onClick={() => setCurrentChat(chat)}>
+                            <ChatCard isActive={chat["advertisement-id"] == currentChat?.["advertisement-id"] ? true : false} key={index} onClick={() => setCurrentChat(chat)}>
                                 <CardUpperRow>
                                     <CardReceiver>
-                                        {
+                                        <CardSigil> {
                                             sigil({
                                                 patp: chat.receiver,
                                                 renderer: reactRenderer,
-                                                size: 20,
+                                                size: 25,
                                                 colors: ['white', 'black'],
                                             })
                                         }
+                                        </CardSigil>
                                         <CardReceiverShip>
                                             {chat.receiver}
                                         </CardReceiverShip>
                                     </CardReceiver>
-                                    <Date>
+                                    <CardDate>
                                         {daToDate(chat.msgs[chat.msgs.length - 1].date!).fromNow()}
-                                    </Date>
+                                    </CardDate>
                                 </CardUpperRow>
                                 <CardAdTitle>{chat.title}</CardAdTitle>
                                 <MessagePreview>
-                                    {chat.msgs.slice(-1)[0].text}
+                                    {chat.msgs.slice(-1)[0].ship == '~' + api.ship ? 'You: ' : chat.receiver + ': '} {chat.msgs.slice(-1)[0].text}
                                 </MessagePreview>
                             </ChatCard>
                         )

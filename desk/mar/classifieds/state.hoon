@@ -9,7 +9,7 @@
 ++  grow
   |%
   ++  noun  state-0
-  ++  json  (to-json:state:c state-0)
+  ++  json  (state:to-json:c state-0)
   --
 ++  grad  %noun
 --

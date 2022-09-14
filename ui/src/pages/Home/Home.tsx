@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Chats } from "../../components/Chats/Chats";
-import { Form } from "../../components/Form/Form";
 import { List } from "../../components/List/List";
+import { PublishAd } from "../../components/PublishAd/PublishAd";
 import { Sidebar } from "../../components/Sidebar/Sidebar";
 import { useAppSelector } from "../../redux/hooks/hooks";
 import { Advertisement, TabContent } from "../../types";
@@ -22,7 +22,7 @@ const Home = () => {
         && <List listAds={myads} contentToShow={contentToShow} />
       }
       {(contentToShow == TabContent[TabContent.newAd])
-        && <Form />}
+        && <PublishAd />}
       {(contentToShow == TabContent[TabContent.chat])
         && <Chats />
       }

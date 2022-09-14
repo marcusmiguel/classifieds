@@ -9,7 +9,7 @@
 ++  grow
   |%
   ++  noun  chats 
-  ++  json  (to-json:chats:c chats)
+  ++  json  (chats:to-json:c chats)
   --
 ++  grad  %noun
 --

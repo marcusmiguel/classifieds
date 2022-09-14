@@ -26,8 +26,11 @@ export const ChatList = styled.div`
     width: 17rem;
     height: 100%;
 `;
+interface ChatCardProps {
+    isActive: boolean,
+}
 
-export const ChatCard = styled.div`
+export const ChatCard = styled.div<ChatCardProps>`
     border-radius: .25rem;
     width: 100%;
     height: 5rem;
@@ -38,12 +41,14 @@ export const ChatCard = styled.div`
     cursor: pointer;
     padding: 1em 1em;
     background: white;
+    position: relative;
+    border: ${p => p.isActive ? '1px solid rgba(0, 0, 0, 1)' : 'none'};
 
     &:hover{
         box-shadow: rgba(50, 50, 93, 0.25) 0px 4px 10px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
     }
-`;
 
+`;
 
 export const Conversation = styled.div`
     border-radius: .5em;
@@ -61,11 +66,14 @@ export const CardUpperRow = styled.div`
     align-items: center;
 `;
 
-export const Date = styled.div`
+export const CardDate = styled.div`
     font-size: .65rem;
     color: rgba(0, 0, 0, .5);
     text-align: end;
     line-height: 1;
+    position: absolute;
+    top: 1rem;
+    right: .7rem;
 `;
 
 export const MessagePreview = styled.div`
@@ -74,7 +82,7 @@ export const MessagePreview = styled.div`
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
-    padding: 0 2.4em;
+    padding: 0 1.1rem;
     color: rgba(0, 0, 0, .6);
 `;
 
@@ -83,11 +91,17 @@ export const CardReceiver = styled.div`
     align-items: center;
 `;
 
+export const CardSigil = styled.span`
+    position: absolute;
+    top: 1rem;
+    left: .7rem;
+`;
+
 export const CardReceiverShip = styled.div`
-    margin-left: .5em;
-    font-size: .7rem;
+    font-size: .8rem;
     color:  rgba(0, 0, 0, .7);
     line-height: 1;
+    padding-left: 1.1rem;
 `;
 
 export const ConversationUpperRow = styled.div`
@@ -220,12 +234,12 @@ export const SendIcon = styled(RiSendPlane2Line)`
 
 export const CardAdTitle = styled.div`
     font-size: .7rem;
-    padding: 0 2.2em;
-    margin-bottom: .5em;
-    font-weight: 900;
+    padding: 0 1.1rem;
+    font-weight: 700;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+    margin-bottom: .5em;
 `;
 
 export const ConversationAdTitle = styled.div`
@@ -235,7 +249,7 @@ export const ConversationAdTitle = styled.div`
     white-space: nowrap;
     overflow: hidden;
     width: 100%;
-    padding: 0 3em;
+    padding: 0 1em;
     text-align: center;
 `;
 

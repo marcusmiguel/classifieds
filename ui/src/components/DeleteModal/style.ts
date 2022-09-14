@@ -1,7 +1,7 @@
 import { RiCheckFill, RiCloseFill, RiDeleteBinLine } from 'react-icons/ri';
 import styled from 'styled-components';
 
-export const ConfirmModalContainer = styled.div`
+export const DeleteModalContainer = styled.div`
     z-index: 200;
     position: fixed;
     border: 1px solid rgba(0,0,0,.2);
@@ -17,7 +17,7 @@ export const ConfirmModalContainer = styled.div`
 
 `;
 
-export const ConfirmModalBox = styled.div`   
+export const DeleteModalBox = styled.div`   
     z-index: 201;
     background: white;
     filter: none;
@@ -62,7 +62,6 @@ export const CancelButton = styled.button`
     font-weight: 700;
     box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
     margin-right: 1em;
-
 `;
 
 export const CancelIcon = styled(RiCloseFill)`

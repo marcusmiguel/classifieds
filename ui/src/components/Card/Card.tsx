@@ -14,6 +14,7 @@ interface CardProps {
 
 export const Card = ({ advertisement, setAdToShow }: CardProps) => {
     const formatedDate = daToDate(advertisement!.date!).fromNow();
+    const favorites = useAppSelector((state) => state.classifieds.data.favorites);
 
     const handleCardClick = () => {
         setAdToShow(advertisement);
@@ -28,16 +29,18 @@ export const Card = ({ advertisement, setAdToShow }: CardProps) => {
             }
             <ContentContainer>
                 <Title>{advertisement?.title}
-                    {advertisement.isFavorited && < FavIcon />}
-                    <ForwardIcon />
+                    {favorites?.includes(advertisement.id) && < FavIcon />}
+                    {/* <ForwardIcon /> */}
                 </Title>
                 <BottomRow>
-                    <PriceContainer>
-                        <PriceLabel>
-                            Price
-                        </PriceLabel>
-                        <Price>${advertisement?.price}</Price>
-                    </PriceContainer>
+                    {advertisement.price.trim().length == 0 ?
+                        <PriceContainer /> :
+                        <PriceContainer>
+                            <PriceLabel>
+                                Price
+                            </PriceLabel>
+                            <Price>{advertisement?.price}</Price>
+                        </PriceContainer>}
                     <SourceContainer>
                         <PublisherInfo>
                             {

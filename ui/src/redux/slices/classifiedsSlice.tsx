@@ -31,44 +31,33 @@ interface deleteAdData {
     id: string,
 }
 
-interface receiveChatsData {
-    chats: Chat[],
+interface publishAdData {
+    formValues: {
+        title: string,
+        desc: string,
+        forward: boolean,
+        images: string[],
+        price: string
+    }
+}
+
+interface editAdData {
+    id: string,
+    title: string | null,
+    desc: string | null
+    forward: boolean | null,
+    price: string | null,
+    images: string[] | null,
+}
+
+interface sendMessageData {
+    "advertisement-id": string,
+    to: string;
+    text: string,
+
 }
 
 export const loadState = createAsyncThunk('loadAds', async (data, thunkAPI) => {
-    const res = await api.scry({
-        app: 'classifieds',
-        path: '/state/'
-    });
-
-    console.log(res);
-
-    let newads = res.ads.map(ad => {
-        ad.isFavorited = false;
-        return ad;
-    });
-
-    res.favorites.forEach(fav => {
-        let index = newads.findIndex(obj => obj.id == fav);
-        if (index != undefined) {
-            newads[index].isFavorited = true;
-        }
-    });
-
-    const sortedData = {
-        ads: [...newads.reverse()],
-        myads: [...res.myads.reverse()],
-        favorites: res.favorites,
-    };
-    thunkAPI.dispatch(setState(sortedData));
-
-    await api.subscribe({
-        app: 'classifieds',
-        path: '/chats',
-        err: () => { },
-        event: (data) => receiveChats(data),
-        quit: () => { }
-    })
 
     const receiveChats = (data) => {
         let state = thunkAPI.getState() as RootState;
@@ -87,17 +76,98 @@ export const loadState = createAsyncThunk('loadAds', async (data, thunkAPI) => {
 
         let titledChats = [...data.chats.map(chat => { return { ...chat, title: getTitle(chat['advertisement-id']) } })];
         let sortedChats = [...titledChats.sort((a, b) => (daToDate(b.msgs.slice(-1)[0].date).diff(daToDate(a.msgs.slice(-1)[0].date))))];
-        console.log(sortedChats);
         thunkAPI.dispatch(setChats(sortedChats));
     }
 
+    const receiveAds = (data) => {
+        thunkAPI.dispatch(setAds(data.ads.reverse()));
+    }
+
+    const receiveMyAds = (data) => {
+        thunkAPI.dispatch(setMyAds(data.myads.reverse()));
+    }
+
+    const receiveFavorites = (data) => {
+        thunkAPI.dispatch(setFavorites(data.favorites));
+    }
+
+    await api.subscribe({
+        app: 'classifieds',
+        path: '/ads',
+        err: () => { },
+        event: (data) => receiveAds(data),
+        quit: () => { }
+    })
+
+    await api.subscribe({
+        app: 'classifieds',
+        path: '/myads',
+        err: () => { },
+        event: (data) => receiveMyAds(data),
+        quit: () => { }
+    })
+
+    await api.subscribe({
+        app: 'classifieds',
+        path: '/chats',
+        err: () => { },
+        event: (data) => receiveChats(data),
+        quit: () => { }
+    })
+
+    await api.subscribe({
+        app: 'classifieds',
+        path: '/favorites',
+        err: () => { },
+        event: (data) => receiveFavorites(data),
+        quit: () => { }
+    })
+
+
+}
+);
+
+export const publishAd = createAsyncThunk('publishAd', async (data: publishAdData, thunkAPI) => {
+    api.poke(
+        {
+            app: 'classifieds',
+            mark: 'classifieds-action',
+            json: {
+                'publish-ad': {
+                    'title': data.formValues.title,
+                    'desc': data.formValues.desc,
+                    'price': data.formValues.price,
+                    'forward': data.formValues.forward,
+                    'images': data.formValues.images
+                }
+            },
+        }
+    );
 });
 
+export const editAd = createAsyncThunk('editAd', async (data: editAdData, thunkAPI) => {
+    // let state = thunkAPI.getState() as RootState;
+    // let newmyads = state.classifieds.data.myads?.map(ad => ad.id == data.ad.id ? { ...ad, title: ad.title, desc: ad.desc, images: ad.images, price: ad.price, forward: ad.forward } : ad);
+    // thunkAPI.dispatch(setMyAds(newmyads));
+    api.poke(
+        {
+            app: 'classifieds',
+            mark: 'classifieds-action',
+            json: {
+                'edit-ad': {
+                    'id': data.id,
+                    'title': data.title,
+                    'desc': data.desc,
+                    'price': data.price,
+                    'forward': data.forward,
+                    'images': data.images
+                }
+            },
+        }
+    );
+});
 
 export const deleteAd = createAsyncThunk('toggleFavorite', async (data: deleteAdData, thunkAPI) => {
-    let state = thunkAPI.getState() as RootState;
-    let newmyads = state.classifieds.data.myads?.filter(ad => ad.id != data.id);
-    thunkAPI.dispatch(setMyAds(newmyads));
     api.poke(
         {
             app: 'classifieds',
@@ -112,24 +182,6 @@ export const deleteAd = createAsyncThunk('toggleFavorite', async (data: deleteAd
 });
 
 export const toggleFavorite = createAsyncThunk('toggleFavorite', async (data: toggleFavoriteData, thunkAPI) => {
-    let state = thunkAPI.getState() as RootState;
-    let favorites = state.classifieds.data.favorites;
-
-    let advertisements = state.classifieds.data.ads;
-    let newads = advertisements!.map(ad => ad.id == data.id ? { ...ad, isFavorited: !ad.isFavorited } : ad)
-    thunkAPI.dispatch(setAds([...newads]));
-
-    if (favorites) {
-        if (!favorites.includes(data.id)) {
-            thunkAPI.dispatch(setFavorites([...favorites, data.id]));
-        }
-        else {
-            let favoritesCopy = [...favorites]
-            let newFavorites = favoritesCopy.filter(x => x != data.id);
-            thunkAPI.dispatch(setFavorites(newFavorites));
-        }
-    }
-
     api.poke(
         {
             app: 'classifieds',
@@ -143,6 +195,23 @@ export const toggleFavorite = createAsyncThunk('toggleFavorite', async (data: to
     );
 
 });
+
+export const sendMessage = createAsyncThunk('sendMessage', async (data: sendMessageData, thunkAPI) => {
+    api.poke(
+        {
+            app: 'classifieds',
+            mark: 'classifieds-action',
+            json: {
+                'send-message': {
+                    'advertisement-id': data["advertisement-id"],
+                    'to': data.to,
+                    'text': data.text,
+                }
+            },
+        }
+    );
+});
+
 
 const classifiedsSlice = createSlice({
     name: "classifieds",

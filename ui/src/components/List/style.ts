@@ -95,6 +95,8 @@ export const SearchContainer = styled.div`
     height: 1.5rem;
     width: 30%;
     margin-right: 1rem;
+    margin-bottom: 1em;
+
 `
 
 export const SearchBar = styled.input`
