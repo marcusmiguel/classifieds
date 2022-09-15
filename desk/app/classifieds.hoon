@@ -153,7 +153,10 @@
           `this(chats (weld chats `(list chat)`~[[receiver=src.bowl advertisement-id=advertisement-id.act msgs=[msg.act ~]]]))
         =/  old-chat       (snag +.index chats)
         =/  modified-chat  [receiver=src.bowl advertisement-id=advertisement-id.old-chat msgs=(weld msgs.old-chat ~[msg.act])]
-        `this(chats (snap chats +.index modified-chat))
+        =/  new-chats      (snap chats +.index modified-chat)
+        :_  this(chats new-chats)
+        :~  [%give %fact ~[/chats] %classifieds-chats !>(new-chats)]
+        ==
       ==
   ==
 ::
@@ -312,8 +315,8 @@
 ++  validate-desc
   |=  desc=tape
   ^-  tape  
-  ?:  (gth (lent desc) 100)
-    " Description cannot exceed 100 characters;"
+  ?:  (gth (lent desc) 200)
+    " Description cannot exceed 200 characters;"
   ~
 ++  validate-images
   |=  images=(list @t)
