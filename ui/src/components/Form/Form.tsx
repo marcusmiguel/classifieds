@@ -138,7 +138,7 @@ export const Form = ({ advertisement, onCloseFunction }: FormProps) => {
         type='text'
         value={formValues.price}
         id='price'
-        maxLength={10}
+        maxLength={12}
         placeholder="e.g. 100 €"
       />
       {/* <Label>Allow forwarding?</Label>
@@ -189,7 +189,7 @@ export const Form = ({ advertisement, onCloseFunction }: FormProps) => {
         onChange={handleChange}
         value={formValues.desc}
         id='desc'
-        maxLength={200}
+        maxLength={1000}
       />
       <SubmitButton onClick={handleSubmitButtonClick}><SubmitIcon />Submit</SubmitButton>
     </FormContainer >

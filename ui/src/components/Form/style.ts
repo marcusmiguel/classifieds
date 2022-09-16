@@ -134,7 +134,7 @@ export const SubmitIcon = styled(RiArrowUpCircleLine)`
 
 export const TextArea = styled.textarea`
     width: 100%;
-    height: 5em;
+    height: 8em;
     margin-bottom: .5em;
     border: 1px solid rgba(0,0,0,.2);
     border-radius: .25rem;

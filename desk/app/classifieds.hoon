@@ -315,8 +315,8 @@
 ++  validate-desc
   |=  desc=tape
   ^-  tape  
-  ?:  (gth (lent desc) 200)
-    " Description cannot exceed 200 characters;"
+  ?:  (gth (lent desc) 1.000)
+    " Description cannot exceed 1000 characters;"
   ~
 ++  validate-images
   |=  images=(list @t)
@@ -327,7 +327,7 @@
 ++  validate-price
   |=  price=tape
   ^-  tape
-  ?:  (gth (lent price) 10)
-    " Price cannot exceed 10 digits;"
+  ?:  (gth (lent price) 12)
+    " Price cannot exceed 12 digits;"
   ~
 --

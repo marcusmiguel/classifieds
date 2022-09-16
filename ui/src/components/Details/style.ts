@@ -29,6 +29,7 @@ export const Title = styled.span`
     line-height: 1;
     max-height: 25%;
     word-break: break-all;
+    padding-bottom: .5em;
 `;
 
 export const Tags = styled.div`
@@ -74,18 +75,20 @@ export const FirstSection = styled.div`
 export const Desc = styled.span`
     line-height: 1;
     height: 100%;
-    overflow: hidden;
+    overflow-y: auto;
+    overflow-x: hidden;
     word-break: break-all; 
     word-wrap: break-word; 
     white-space: normal;
-    padding: 1em 0;
+    padding: .5em 0;
 `;
 
 export const InfoRow = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 20%;
+    height: 25%;
+    padding-top: .5em;
 `;
 
 export const SourceContainer = styled.div`
@@ -135,7 +138,7 @@ export const ImageColumn = styled.div`
 `;
 
 export const Image = styled.img`
-    height: 18em;
+    height: 15rem;
     width: 100%;
     border-radius: .25rem;
     object-fit: contain;
@@ -186,8 +189,8 @@ export const InfoBox = styled.div`
     box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px 0px;
     padding: 1em 1.5em;
     border-radius: .25rem;
-    max-height: 12rem;
-    min-height: 12rem;
+    max-height: 15rem;
+    min-height: 15rem;
     background: white;
     border: 1px solid rgba(0,0,0,.2);
 
@@ -203,6 +206,7 @@ export const Actions = styled.div`
     justify-content: start;
     align-items: end;
     height: 2.4rem;
+    margin-top: .5em;
 `;
 
 export const ForwardButton = styled.button`
