@@ -194,7 +194,7 @@ export const Details = ({ advertisement, setAd, contentToShow }: DetailsProps) =
                                 </PriceContainer>}
                             <SourceContainer>
                                 <PublisherInfo>
-                                    {
+                                    {advertisement.ship && advertisement.ship.length <= 14 &&
                                         sigil({
                                             patp: advertisement.ship,
                                             renderer: reactRenderer,
@@ -246,7 +246,7 @@ export const Details = ({ advertisement, setAd, contentToShow }: DetailsProps) =
                     {displayChat && <Conversation id="detailsConversation">
                         <ConversationUpperRow>
                             <ConversationReceiver>
-                                {
+                                {advertisement.ship && advertisement.ship.length <= 14 &&
                                     sigil({
                                         patp: advertisement.ship,
                                         renderer: reactRenderer,
@@ -269,6 +269,7 @@ export const Details = ({ advertisement, setAd, contentToShow }: DetailsProps) =
                                         {/* {!(chat.msgs[index] && chat.msgs[index].ship != '~' + api.ship) && */}
                                         <SigilContainer>
                                             {
+                                                msg.ship && msg.ship.length <= 14 &&
                                                 sigil({
                                                     patp: msg.ship,
                                                     renderer: reactRenderer,

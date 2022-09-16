@@ -16,11 +16,6 @@ export const ListGrid = styled.div`
     grid-template-columns: repeat(2, 1fr);
     gap: 1em;
     margin-bottom: 1.5em;
-
-    @media (max-width: 768px){
-        
-    }
-
 `;
 
 export const UpperRow = styled.div`

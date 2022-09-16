@@ -44,6 +44,7 @@ export const Card = ({ advertisement, setAdToShow }: CardProps) => {
                     <SourceContainer>
                         <PublisherInfo>
                             {
+                                advertisement.ship && advertisement.ship.length <= 14 &&
                                 sigil({
                                     patp: advertisement?.ship,
                                     renderer: reactRenderer,
