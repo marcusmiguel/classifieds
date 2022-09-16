@@ -124,9 +124,9 @@ export const List = ({ listAds, contentToShow }: ListProps) => {
                         <NotificationIcon />
                     </NotificationButton> */}
                     <UserInfo>
-                        {
+                        {api.ship && api.ship.length <= 14 &&
                             sigil({
-                                patp: api.ship!,
+                                patp: api.ship,
                                 renderer: reactRenderer,
                                 size: 20,
                                 colors: ['white', 'black'],

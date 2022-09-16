@@ -9,6 +9,7 @@ export function App() {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
+    console.log(api.ship)
     dispatch(loadState());
     document.body.style.overflowX = "hidden";
     document.body.style.overflowY = "auto";

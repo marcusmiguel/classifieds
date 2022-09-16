@@ -87,6 +87,7 @@ export const Chats = () => {
                                 <CardUpperRow>
                                     <CardReceiver>
                                         <CardSigil> {
+                                            chat.receiver && chat.receiver.length <= 14 &&
                                             sigil({
                                                 patp: chat.receiver,
                                                 renderer: reactRenderer,
@@ -116,6 +117,7 @@ export const Chats = () => {
                             <ConversationUpperRow>
                                 <ConversationReceiver>
                                     {
+                                        currentChat.receiver && currentChat.receiver.length <= 14 &&
                                         sigil({
                                             patp: currentChat.receiver,
                                             renderer: reactRenderer,
@@ -137,8 +139,9 @@ export const Chats = () => {
                                         <ReceivedMessage key={index}>
                                             <SigilContainer>
                                                 {
+                                                    msg.ship && msg.ship.length <= 14 &&
                                                     sigil({
-                                                        patp: '~fidwed-sipwyn',
+                                                        patp: msg.ship,
                                                         renderer: reactRenderer,
                                                         size: 20,
                                                         colors: ['white', 'black'],
