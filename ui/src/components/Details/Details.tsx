@@ -3,12 +3,13 @@ import moment from "moment";
 import React, { useEffect, useRef, useState } from "react";
 import api from "../../api";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks/hooks";
-import { deleteAd, toggleFavorite } from "../../redux/slices/classifiedsSlice";
+import { deleteAd, sendMessage, toggleFavorite } from "../../redux/slices/classifiedsSlice";
 import { Advertisement, Chat, TabContent } from "../../types";
 import { daToDate } from "../../util";
-import { ConfirmModal } from "../ConfirmModal/ConfirmModal";
+import { DeleteModal } from "../DeleteModal/DeleteModal";
+import { EditModal } from "../EditModal/EditModal";
 import { ForwardModal } from "../ForwardModal/ForwardModal";
-import { Desc, DetailsContainer, Publisher, Title, Image, Date, FavButton, FavIcon, ForwardButton, ForwardIcon, Actions, DeleteButton, DeleteIcon, Price, InfoRow, FirstSection, CloseIcon, PriceContainer, SourceContainer, PriceLabel, PublisherInfo, SecondaryImage, UpperRow, Tags, Tag, ImageColumn, InfoColumn, InfoBox, ChatButton, ChatIcon, FavIconClicked, Conversation, ConversationUpperRow, ConversationReceiver, ConversationReceiverShip, ConversationAdTitle, MessageList, SentMessage, MessageText, MessageDate, ReceivedMessage, SigilContainer, ReceivedMessageBox, ConversationBottomRow, Input, InputRow, SendIcon, NavigatedIcon, SecondaryImageRow } from "./style";
+import { Desc, DetailsContainer, Publisher, Title, Image, Date, FavButton, FavIcon, ForwardButton, ForwardIcon, Actions, DeleteButton, DeleteIcon, Price, InfoRow, FirstSection, CloseIcon, PriceContainer, SourceContainer, PriceLabel, PublisherInfo, SecondaryImage, UpperRow, Tags, Tag, ImageColumn, InfoColumn, InfoBox, ChatButton, ChatIcon, FavIconClicked, Conversation, ConversationUpperRow, ConversationReceiver, ConversationReceiverShip, ConversationAdTitle, MessageList, SentMessage, MessageText, MessageDate, ReceivedMessage, SigilContainer, ReceivedMessageBox, ConversationBottomRow, Input, InputRow, SendIcon, NavigatedIcon, SecondaryImageRow, EditButton, EditIcon } from "./style";
 
 interface DetailsProps {
     advertisement: Advertisement,
@@ -18,14 +19,27 @@ interface DetailsProps {
 
 export const Details = ({ advertisement, setAd, contentToShow }: DetailsProps) => {
     const dispatch = useAppDispatch();
+    const favorites = useAppSelector((state) => state.classifieds.data.favorites);
     const chats = useAppSelector((state) => state.classifieds.data.chats);
     const [chat, setChat] = useState<Chat | undefined>();
     const [displayChat, setDisplayChat] = useState(false);
-    const [displayConfirmModal, setDisplayConfirmModal] = useState(false);
+    const [displayDeleteModal, setDisplayDeleteModal] = useState(false);
+    const [displayEditModal, setDisplayEditModal] = useState(false);
     const [displayForwardModal, setDisplayForwardModal] = useState(false);
     const [inputMessage, setInputMessage] = useState('');
     const [mainImage, setMainImage] = useState<string>(advertisement.images[0]);
     const [secondaryImages, setSecondaryImages] = useState<string[]>([...advertisement.images.slice(1)])
+    const [isFavorited, setIsFavorited] = useState(false);
+
+    useEffect(() => {
+        if (favorites)
+            setIsFavorited(favorites?.includes(advertisement.id))
+    }, [favorites]);
+
+    useEffect(() => {
+        console.log(advertisement)
+    }, [advertisement]);
+
 
     useEffect(() => {
         document.body.style.overflow = "hidden";
@@ -67,14 +81,19 @@ export const Details = ({ advertisement, setAd, contentToShow }: DetailsProps) =
 
     const handleDetailsClose = () => {
         setAd();
-        document.body.style.overflowY = "scroll";
-        document.body.style.overflowX = "hidden";
+        document.body.style.overflow = "auto";
+    }
+
+    const handleFavButtonClick = () => {
+        setIsFavorited(!isFavorited);
+        dispatch(toggleFavorite({ id: advertisement.id }));
     }
 
     const handleDeleteModalConfirm = () => {
         dispatch(deleteAd({ id: advertisement.id }));
         setAd();
-        setDisplayConfirmModal(false);
+        document.body.style.overflow = "auto";
+        setDisplayDeleteModal(false);
     };
 
     const handleImageClick = (e) => {
@@ -125,19 +144,7 @@ export const Details = ({ advertisement, setAd, contentToShow }: DetailsProps) =
 
     const handleSendMessage = () => {
         if (inputMessage.trim().length == 0) return
-        api.poke(
-            {
-                app: 'classifieds',
-                mark: 'classifieds-action',
-                json: {
-                    'send-message': {
-                        'advertisement-id': advertisement.id,
-                        'to': advertisement.ship,
-                        'text': inputMessage,
-                    }
-                },
-            }
-        );
+        dispatch(sendMessage({ 'advertisement-id': advertisement.id, to: advertisement.ship, text: inputMessage }))
         setInputMessage('');
     }
 
@@ -145,6 +152,10 @@ export const Details = ({ advertisement, setAd, contentToShow }: DetailsProps) =
         if (e.key == 'Enter') {
             handleSendMessage();
         }
+    }
+
+    const onEditCloseFunction = () => {
+        setDisplayEditModal(false);
     }
 
     return (
@@ -172,12 +183,15 @@ export const Details = ({ advertisement, setAd, contentToShow }: DetailsProps) =
                         </Title>
                         <Desc>{advertisement?.desc}</Desc>
                         <InfoRow>
-                            <PriceContainer>
-                                <PriceLabel>
-                                    Price
-                                </PriceLabel>
-                                <Price>${advertisement.price}</Price>
-                            </PriceContainer>
+                            {advertisement.price.trim().length == 0 ?
+                                <PriceContainer />
+                                :
+                                <PriceContainer>
+                                    <PriceLabel>
+                                        Price
+                                    </PriceLabel>
+                                    <Price>{advertisement.price}</Price>
+                                </PriceContainer>}
                             <SourceContainer>
                                 <PublisherInfo>
                                     {
@@ -199,23 +213,31 @@ export const Details = ({ advertisement, setAd, contentToShow }: DetailsProps) =
                     <Actions>
                         {contentToShow == TabContent[TabContent.ads] ?
                             <>
-                                <FavButton isFavorited={advertisement.isFavorited} onClick={() => dispatch(toggleFavorite({ id: advertisement.id }))} >
-                                    {advertisement.isFavorited ? <><FavIconClicked />Favorited</> : <><FavIcon />Favorite</>}
+                                <FavButton isFavorited={isFavorited} onClick={() => handleFavButtonClick()} >
+                                    {isFavorited ? <><FavIconClicked />Favorited</> : <><FavIcon />Favorite</>}
                                 </FavButton>
-                                <ForwardButton onClick={() => setDisplayForwardModal(true)}>
+                                {/* <ForwardButton onClick={() => setDisplayForwardModal(true)}>
                                     <ForwardIcon />Forward
-                                </ForwardButton>
+                                </ForwardButton> */}
                                 <ChatButton id="detailsChatButton" onClick={handleChatButtonClick}>
                                     <ChatIcon />Chat
                                 </ChatButton>
                             </>
                             :
-                            <DeleteButton onClick={() => setDisplayConfirmModal(true)}>
-                                <DeleteIcon />Delete
-                            </DeleteButton>
+                            <>
+                                <EditButton onClick={() => setDisplayEditModal(true)}>
+                                    <EditIcon />Edit
+                                </EditButton>
+                                <DeleteButton onClick={() => setDisplayDeleteModal(true)}>
+                                    <DeleteIcon />Delete
+                                </DeleteButton>
+                            </>
                         }
-                        {displayConfirmModal &&
-                            <ConfirmModal onConfirmFunction={handleDeleteModalConfirm} onCancelFunction={() => setDisplayConfirmModal(false)} Message={"Are you sure?"} />
+                        {displayDeleteModal &&
+                            <DeleteModal onConfirmFunction={handleDeleteModalConfirm} onCancelFunction={() => setDisplayDeleteModal(false)} />
+                        }
+                        {displayEditModal &&
+                            <EditModal onConfirmFunction={handleDeleteModalConfirm} onCloseFunction={onEditCloseFunction} advertisement={advertisement} />
                         }
                         {displayForwardModal &&
                             <ForwardModal advertisement={advertisement} setDisplayForwardModal={setDisplayForwardModal}></ForwardModal>

@@ -1,22 +1,31 @@
 import React, { useEffect, useState } from "react";
 import api from "../../api";
+import { useAppDispatch } from "../../redux/hooks/hooks";
+import { editAd, publishAd } from "../../redux/slices/classifiedsSlice";
+import { Advertisement } from "../../types";
 import { AddedImage, AddedImageContainer, AddedImagesRow, AddIcon, AddImageButton, AddImageRow, ErrorMessage, FormContainer, FormTitle, Input, Label, RadioInput, RemoveImage, SelectRow, SubmitButton, SubmitIcon, TextArea, UrlInput } from "./style";
+
+interface FormProps {
+  advertisement?: Advertisement,
+  onCloseFunction?: Function,
+}
 
 interface formValues {
   title: string,
   desc: string,
-  price: number,
+  price: string,
   tags: string[],
   images: string[],
+  forward: boolean,
 }
 
-export const Form = () => {
-  const [formValues, setFormValues] = useState<formValues>({ title: '', desc: '', tags: [], price: 0, images: [] });
+export const Form = ({ advertisement, onCloseFunction }: FormProps) => {
+  const dispatch = useAppDispatch();
+  const [formValues, setFormValues] = useState<formValues>({ title: '', desc: '', tags: [], price: '', images: [], forward: true });
   const [formErrors, setFormErrors] = useState({ title: "", });
 
   const [inputUrl, setInputUrl] = useState('');
   const [disableAdImages, setDisableAdImages] = useState(false);
-  const [selectedOption, setSelectedOption] = useState(true);
 
   const handleSubmitButtonClick = (e) => {
     e.preventDefault();
@@ -39,36 +48,31 @@ export const Form = () => {
   }
 
   const submitForm = () => {
-
-    api.poke(
-      {
-        app: 'classifieds',
-        mark: 'classifieds-action',
-        json: {
-          'publish-ad': {
-            'title': formValues.title,
-            'desc': formValues.desc,
-            'price': +formValues.price + '',
-            'forward': selectedOption,
-            'images': formValues.images
-          }
-        },
+    if (advertisement) {
+      let payload = {
+        id: advertisement.id,
+        title: advertisement.title == formValues.title ? null : formValues.title,
+        desc: advertisement.desc == formValues.desc ? null : formValues.desc,
+        price: advertisement.price == formValues.price ? null : formValues.price,
+        forward: advertisement.forward == formValues.forward ? null : formValues.forward,
+        images: JSON.stringify(advertisement.images) == JSON.stringify(formValues.images) ? null : formValues.images,
       }
-    );
-    setFormValues({ title: '', desc: '', price: 0, tags: [], images: [] });
+      dispatch(editAd(payload));
+
+      if (onCloseFunction)
+        onCloseFunction();
+    }
+    else {
+      dispatch(publishAd({ formValues: formValues }))
+
+    }
+    setFormValues({ title: '', desc: '', price: '', tags: [], images: [], forward: true });
     setInputUrl('');
   };
 
   const handleChange = (e) => {
     const { id, value } = e.target;
 
-    if (id == 'price' && value < 0)
-      return;
-    if (id == 'price') {
-      var t = value.slice(0, 8);
-      setFormValues({ ...formValues, [id]: (t.indexOf(".") >= 0) ? (t.substr(0, t.indexOf(".")) + t.substr(t.indexOf("."), 3)) : t });
-      return;
-    }
     if (id == 'title')
       setFormErrors({ title: "", });
 
@@ -100,6 +104,13 @@ export const Form = () => {
     };
   }, [formValues.images]);
 
+
+  useEffect(() => {
+    if (advertisement) {
+      setFormValues({ title: advertisement.title, desc: advertisement.desc, price: advertisement.price, tags: [], images: advertisement.images, forward: advertisement.forward });
+    }
+  }, []);
+
   const handleRemoveImage = (image) => {
     if (formValues.images.length == 4) {
       setDisableAdImages(false);
@@ -110,7 +121,7 @@ export const Form = () => {
 
   return (
     <FormContainer>
-      <FormTitle>New Ad</FormTitle>
+      {advertisement ? <FormTitle>Edit Ad</FormTitle> : <FormTitle>New Ad</FormTitle>}
       <Label>Title</Label>
       <Input
         placeholder="give a small title..."
@@ -124,28 +135,29 @@ export const Form = () => {
       <Label>Price</Label>
       <Input
         onChange={handleChange}
-        type='number'
+        type='text'
         value={formValues.price}
         id='price'
-        min='0'
+        maxLength={12}
+        placeholder="e.g. 100 €"
       />
-      <Label>Allow forwarding?</Label>
+      {/* <Label>Allow forwarding?</Label>
       <SelectRow>
         <RadioInput
-          onChange={() => setSelectedOption(true)}
+          onChange={() => setFormValues({ ...formValues, forward: true })}
           type="radio"
           value='Yes'
-          checked={selectedOption == true}
+          checked={formValues.forward == true}
         />Yes
       </SelectRow >
       <SelectRow>
         <RadioInput
-          onChange={() => setSelectedOption(false)}
+          onChange={() => setFormValues({ ...formValues, forward: false })}
           type="radio"
-          checked={selectedOption == false}
+          checked={formValues.forward == false}
           value='No'
         />No
-      </SelectRow>
+      </SelectRow> */}
       <Label>Images</Label>
       {
         formValues.images.length > 0 &&
@@ -177,7 +189,7 @@ export const Form = () => {
         onChange={handleChange}
         value={formValues.desc}
         id='desc'
-        maxLength={200}
+        maxLength={1000}
       />
       <SubmitButton onClick={handleSubmitButtonClick}><SubmitIcon />Submit</SubmitButton>
     </FormContainer >

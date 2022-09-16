@@ -5,7 +5,7 @@
 ++  grab
   |%  
   ++  noun  action:classifieds
-  ++  json  from-json:action:c  
+  ++  json  action:from-json:c  
   --  
 ++  grow
   |%  

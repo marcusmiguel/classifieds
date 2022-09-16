@@ -36,7 +36,7 @@ export const ContentContainer = styled.div`
     height: 100%;
     justify-content: space-between;
     align-items: space-between;
-    padding: 0em .5em 0em 1em;
+    padding: 0em 0em 0em .5em;
 `;
 
 export const MiddleRow = styled.div`

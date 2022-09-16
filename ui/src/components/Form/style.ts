@@ -11,14 +11,14 @@ export const FormContainer = styled.div`
     height: 100%;
     background: rgba(253,253,253,1);
     overflow: hidden;
-    width: 20%;
+    font-size: 1rem;
+    width: 10em;
 `;
 
 export const FormTitle = styled.div`
     width: 100%;
     font-weight: 900;
     font-size: .9rem;
-    margin-bottom: .1em;
 `;
 
 export const ErrorMessage = styled.div`
@@ -45,7 +45,7 @@ export const Input = styled.input`
     width: 100%;
     border: 1px solid rgba(0,0,0,.2);
     border-radius: .25rem;
-    padding: 0 .5em;
+    padding: .2em .5em;
     font-size: .7rem;
     background: white;
 `;
@@ -55,7 +55,7 @@ export const UrlInput = styled.input<AddImageProps>`
     border: 1px solid rgba(0,0,0,.2);
     border-top-left-radius: .25rem;
     border-bottom-left-radius: .25rem;
-    padding: 0 .5em;
+    padding: .2em .5em;
     font-size: .7rem;
 `;
 
@@ -134,7 +134,7 @@ export const SubmitIcon = styled(RiArrowUpCircleLine)`
 
 export const TextArea = styled.textarea`
     width: 100%;
-    height: 5em;
+    height: 8em;
     margin-bottom: .5em;
     border: 1px solid rgba(0,0,0,.2);
     border-radius: .25rem;

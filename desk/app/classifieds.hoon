@@ -19,7 +19,7 @@
 %-  %+  agent:gossip
       [2 %mutuals %mutuals]
     %-  malt
-    ^-  (list [mark $-(* vase)])
+    ^-  (list [mark $-(* vase)])  
     :~  [%classifieds-advertisement |=(n=* !>((grab-ad n)))]
         [%classifieds-ad-catalog |=(n=* !>((grab-ad-catalog n)))]
         [%classifieds-state |=(n=* !>((grab-state n)))]
@@ -72,9 +72,13 @@
             price=price.act 
             images=images.act
           ==
+        =/  errors  (validate-ad:hc ad)
+        ?.  =(errors ~)  ~|((weld "Error(s) validating ad:" `tape`errors) !!)
         =/  myads-new  (weld myads ~[ad])
         :_  this(myads myads-new) 
-        [(invent:gossip %classifieds-ad-catalog !>([our.bowl now.bowl myads-new]))]~
+        :~  [(invent:gossip %classifieds-ad-catalog !>([our.bowl now.bowl myads-new]))]
+            [%give %fact ~[/myads] %classifieds-myads !>(myads-new)]
+        ==
         ::
           %delete-ad
         ?>  =(our.bowl src.bowl)
@@ -82,52 +86,65 @@
         ?~  exists
           ~|((weld "No ad with id " (scow %uv id.act)) !!)
         =/  myads-new    (oust [u.exists 1] myads)
-        =/  ads-to-list  (zing ~(val by ads))
-        :-  [(invent:gossip %classifieds-ad-catalog !>([our.bowl now.bowl myads-new]))]~
+        =/  ads-to-list  (weld `(list advertisement)`(zing ~(val by ads)) `(list advertisement)`myads-new)
+        =/  chats-new    (update-chats:hc [(weld myads-new `(list advertisement)`ads-to-list) chats]) 
+        :- 
+          :~  [(invent:gossip %classifieds-ad-catalog !>([our.bowl now.bowl myads-new]))]
+              [%give %fact ~[/myads] %classifieds-myads !>(myads-new)]
+              [%give %fact ~[/chats] %classifieds-chats !>(chats-new)]
+          ==
         %=  this 
-          myads      myads-new
-          chats      (update-chats:hc [(weld myads-new `(list advertisement)`ads-to-list) chats]) 
+          myads      myads-new 
+          chats      chats-new
         ==
         ::
-          %update-ad
+          %edit-ad
         ?>  =(our.bowl src.bowl)
         =/  local-ind  (need (find ~[id.act] (turn myads |=(=advertisement id.advertisement))))
         =/  ad-old  (snag local-ind myads)
         =/  ad-new 
         %_  ad-old 
           forward  (fall forward.act forward.ad-old)
-          title  (fall title.act title.ad-old)
-          desc  (fall desc.act desc.ad-old)
-          price  (fall price.act price.ad-old)
-          images  (fall images.act images.ad-old)
+          title    (fall title.act title.ad-old)
+          desc     (fall desc.act desc.ad-old)
+          price    (fall price.act price.ad-old)
+          images   (fall images.act images.ad-old)
         ==
         =/  myads-new  (snap myads local-ind ad-new)
-        :-  [(invent:gossip %classifieds-ad-catalog !>([our.bowl now.bowl myads-new]))]~
-        this(myads myads-new)
+        :-  
+          :~  [(invent:gossip %classifieds-ad-catalog !>([our.bowl now.bowl myads-new]))]
+              [%give %fact ~[/myads] %classifieds-myads !>(myads-new)]
+              [%give %fact ~[/chats] %classifieds-chats !>(chats)]
+          ==
+          this(myads myads-new)
         ::
           %toggle-favorite
         ?>  =(our.bowl src.bowl)
         =/  exists  (find ~[id.act] favorites)
         ?~  exists
-          `this(favorites (weld favorites ~[id.act])) 
-        `this(favorites (oust [u.exists 1] favorites))
+          =/  favs-new  (weld favorites ~[id.act])
+          :-  [%give %fact ~[/favorites] %classifieds-favorites !>(favs-new)]~
+          this(favorites favs-new) 
+        =/  favs-new  (oust [u.exists 1] favorites)
+        :-  [%give %fact ~[/favorites] %classifieds-favorites !>(favs-new)]~
+        this(favorites favs-new)
         ::
           %send-message
         ?>  =(our.bowl src.bowl)
-        =/  new-msg   [ship=our.bowl date=now.bowl text=text.act]
+        =/  msg-new   [ship=our.bowl date=now.bowl text=text.act]
         =/  index     (find ~[advertisement-id.act] (turn chats |=(=chat advertisement-id.chat)))
         ?:  =(index ~)
-          =/  new-chats  (weld chats `(list chat)`~[[receiver=to.act advertisement-id=`ad-id`advertisement-id.act msgs=[new-msg ~]]])
-          :_  this(chats new-chats)
-          :~  [%pass /chat/(scot %p to.act)/(scot %uv advertisement-id.act) %agent [to.act %classifieds] %poke %classifieds-action !>([%receive-message advertisement-id=`ad-id`advertisement-id.act msg=new-msg])]
-              [%give %fact ~[/chats] %classifieds-chats !>(new-chats)]
+          =/  chats-new  (weld chats `(list chat)`~[[receiver=to.act advertisement-id=`ad-id`advertisement-id.act msgs=[msg-new ~]]])
+          :_  this(chats chats-new)
+          :~  [%pass /chat/(scot %p to.act)/(scot %uv advertisement-id.act) %agent [to.act %classifieds] %poke %classifieds-action !>([%receive-message advertisement-id=`ad-id`advertisement-id.act msg=msg-new])]
+              [%give %fact ~[/chats] %classifieds-chats !>(chats-new)]
           ==  
         =/  old-chat       (snag +.index chats)
-        =/  modified-chat  [receiver=receiver.old-chat advertisement-id=advertisement-id.old-chat msgs=(weld msgs.old-chat ~[new-msg])]
-        =/  new-chats  (snap chats +.index modified-chat)
-        :_  this(chats new-chats)
-        :~  [%pass /chat/(scot %p to.act)/(scot %uv advertisement-id.act) %agent [to.act %classifieds] %poke %classifieds-action !>([%receive-message advertisement-id=`ad-id`advertisement-id.act msg=new-msg])]
-            [%give %fact ~[/chats] %classifieds-chats !>(new-chats)]
+        =/  modified-chat  [receiver=receiver.old-chat advertisement-id=advertisement-id.old-chat msgs=(weld msgs.old-chat ~[msg-new])]
+        =/  chats-new      (snap chats +.index modified-chat)
+        :_  this(chats chats-new)
+        :~  [%pass /chat/(scot %p to.act)/(scot %uv advertisement-id.act) %agent [to.act %classifieds] %poke %classifieds-action !>([%receive-message advertisement-id=`ad-id`advertisement-id.act msg=msg-new])]
+            [%give %fact ~[/chats] %classifieds-chats !>(chats-new)]
         ==
         ::
           %receive-message
@@ -136,7 +153,10 @@
           `this(chats (weld chats `(list chat)`~[[receiver=src.bowl advertisement-id=advertisement-id.act msgs=[msg.act ~]]]))
         =/  old-chat       (snag +.index chats)
         =/  modified-chat  [receiver=src.bowl advertisement-id=advertisement-id.old-chat msgs=(weld msgs.old-chat ~[msg.act])]
-        `this(chats (snap chats +.index modified-chat))
+        =/  new-chats      (snap chats +.index modified-chat)
+        :_  this(chats new-chats)
+        :~  [%give %fact ~[/chats] %classifieds-chats !>(new-chats)]
+        ==
       ==
   ==
 ::
@@ -157,7 +177,6 @@
   ?+    path  (on-watch:def path)
     ::
         [%~.~ %gossip %source ~]
-      ?>  (~(has in get-mutuals:hc) src.bowl)
       :_  this
       :~  [%give %fact ~ %classifieds-ad-catalog !>([publisher=our.bowl timestamp=now.bowl ads=myads])]
       ==
@@ -168,6 +187,24 @@
       :~  [%give %fact ~ %classifieds-chats !>(chats)]
       ==
     ::
+        [%ads ~]
+      ?>  =(our.bowl src.bowl)
+      :_  this
+      :~  [%give %fact ~ %classifieds-ads !>(ads)]
+      ==
+    ::
+        [%myads ~]
+      ?>  =(our.bowl src.bowl)
+      :_  this
+      :~  [%give %fact ~ %classifieds-myads !>(myads)]
+      ==
+    :: 
+        [%favorites ~]
+      ?>  =(our.bowl src.bowl)
+      :_  this
+      :~  [%give %fact ~ %classifieds-favorites !>(favorites)]
+      ==
+    ::
   ==
 ::
 ++  on-peek 
@@ -175,8 +212,8 @@
   ^-  (unit (unit cage))
   ?+  path  (on-peek:def path)
     [%x %state ~]      ``classifieds-state+!>(state)
-    [%x %favorites ~]  ``noun+!>(favorites)
-    [%x %our-ads ~]    ``classifieds-advertisements+!>(myads)
+    [%x %favorites ~]  ``classifieds-favorites+!>(favorites)
+    [%x %myads ~]      ``classifieds-myads+!>(myads)
   ==
 ::
 ++  on-agent
@@ -193,7 +230,12 @@
       =/  ads-new-list  `(list advertisement)`(zing ~(val by ads-new))
       =/  favs-new  (update-favorites:hc [ads.catalog favorites])
       =/  chats-new  (update-chats:hc [(weld myads ads-new-list) chats])
-      `this(ads ads-new, favorites favs-new, chats chats-new)
+      :-  
+        :~  [%give %fact ~[/favorites] %classifieds-favorites !>(favs-new)]
+            [%give %fact ~[/chats] %classifieds-chats !>(chats-new)]
+            [%give %fact ~[/ads] %classifieds-ads !>(ads-new)]
+        ==
+        this(ads ads-new, favorites favs-new, chats chats-new)
 ::      :_  this(ads ads-new, favorites favs-new, chats chats-new)
 ::      ?.  =(publisher.catalog src.bowl)
 ::      :: TODO: check if src.bowl of a forward is a %pals mutal. If yes, ignore the
@@ -254,4 +296,38 @@
 ::
 ++  get-mutuals
   .^((set ship) %gx /(scot %p our.bowl)/pals/(scot %da now.bowl)/mutuals/noun)
+++  validate-ad
+  |=  ad=advertisement
+  ^-  tape
+  =/  title-error   (validate-title title.ad)  
+  =/  desc-error    (validate-desc desc.ad) 
+  =/  images-error  (validate-images images.ad)
+  =/  price-error   (validate-price price.ad)
+  ;:(weld title-error desc-error images-error price-error)
+++  validate-title
+  |=  title=tape
+  ^-  tape
+  ?:  ?|  =((lent title) 0)
+          (gth (lent title) 100)
+      ==
+    " Title cannot be blank nor exceed 100 characters;"
+  ~
+++  validate-desc
+  |=  desc=tape
+  ^-  tape  
+  ?:  (gth (lent desc) 1.000)
+    " Description cannot exceed 1000 characters;"
+  ~
+++  validate-images
+  |=  images=(list @t)
+  ^-  tape
+  ?:  (gth (lent images) 4)
+    " Maximum of four images allowed;"
+  ~
+++  validate-price
+  |=  price=tape
+  ^-  tape
+  ?:  (gth (lent price) 12)
+    " Price cannot exceed 12 digits;"
+  ~
 --

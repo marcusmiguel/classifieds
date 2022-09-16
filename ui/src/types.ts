@@ -8,7 +8,6 @@ export interface Advertisement {
     images: string[],
     price: string,
     forward: boolean,
-    isFavorited: boolean,
 };
 
 export type Favorite = string;
@@ -30,7 +29,7 @@ export interface Notification {
     ship: string,
     text: string,
     date: string,
-    advertisementId: string,
+    "advertisement-id": string,
 };
 
 export enum NotificationMessages {

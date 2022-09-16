@@ -16,6 +16,11 @@ export const ListGrid = styled.div`
     grid-template-columns: repeat(2, 1fr);
     gap: 1em;
     margin-bottom: 1.5em;
+
+    @media (max-width: 768px){
+        
+    }
+
 `;
 
 export const UpperRow = styled.div`
@@ -95,6 +100,8 @@ export const SearchContainer = styled.div`
     height: 1.5rem;
     width: 30%;
     margin-right: 1rem;
+    margin-bottom: 1em;
+
 `
 
 export const SearchBar = styled.input`

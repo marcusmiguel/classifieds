@@ -32,7 +32,7 @@ export const NotificationsModal = ({ notifications, setDisplayNotifications, set
 
     const handleNotificationClick = (notification: Notification) => {
         if (notifications) {
-            setAdToShowById(notification.advertisementId);
+            setAdToShowById(notification["advertisement-id"]);
             setDisplayNotifications(false);
             setNotifications([...notifications.filter(x => x != notification)]);
         }
