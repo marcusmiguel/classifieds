@@ -45,7 +45,6 @@
 ++  on-load
   |=  old-state=vase
   ^-  (quip card _this)
-  :: `this(state [%0 ads=*(map ship (list advertisement)) myads=*(list advertisement) favorites=*(list favorite) chats=*(list chat)])
   =/  old  !<(versioned-state old-state)
   ?-  -.old
     %0  `this(state old)
@@ -236,25 +235,6 @@
             [%give %fact ~[/ads] %classifieds-ads !>(ads-new)]
         ==
         this(ads ads-new, favorites favs-new, chats chats-new)
-::      :_  this(ads ads-new, favorites favs-new, chats chats-new)
-::      ?.  =(publisher.catalog src.bowl)
-::      :: TODO: check if src.bowl of a forward is a %pals mutal. If yes, ignore the
-::      :: incoming catalog
-::      ::
-::        ~
-::      =/  forwards  ^-  (list advertisement)  
-::          (skim ads.catalog |=(ad=advertisement forward.ad))
-::      =/  forward-catalog  catalog(ads forwards) 
-::      [(invent:gossip %classifieds-ad-catalog !>(forward-catalog))]~
-    ::
-::    %classifieds-advertisement   ::  will add the new ad to map
-::      =/  newad    !<(advertisement q.cage.sign)
-::      =/  newlist  (weld (~(got by ads) src.bowl) [newad ~])
-::      :-  ~
-::      %=  this  
-::        ads     (~(gas by ads) ~[[src.bowl newlist]])
-::      ==  
-::    ::
   ==
 ::  
 ++  on-fail   on-fail:def
