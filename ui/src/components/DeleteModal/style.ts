@@ -14,27 +14,42 @@ export const DeleteModalContainer = styled.div`
     justify-content: center;
     padding-top: 15%;
     overflow-x: hidden;
-
+    @media (max-width: 600px) {
+        padding-top: 45%;
+    }
 `;
 
 export const DeleteModalBox = styled.div`   
     z-index: 201;
     background: white;
     filter: none;
-    height: 40%;
-    padding: 1.5em 1.5em;
+    padding: 1.5em;
     border-radius: .25em;
+    overflow: hidden;
+    height: 30vh;
+    display: flex;
+    align-content: center;
+    justify-content: space-between;
+    flex-direction: column;
+
+    @media (max-width: 600px) {
+        width: 85%;
+    }
+
+    @media (max-width: 320px) {
+        width: 100%;
+
+    }
 `;
 
 export const ModalActions = styled.div`
     display: flex;
-    align-items: end;
-    height: 50%;
+    align-items: start;
 `;
 
 export const ConfirmMessage = styled.div`
-    height: 50%;
     font-weight: 700;
+    padding-bottom: .5em;
 `;
 
 export const ConfirmButton = styled.button`

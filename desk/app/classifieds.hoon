@@ -321,8 +321,8 @@
 ++  validate-images
   |=  images=(list @t)
   ^-  tape
-  ?:  (gth (lent images) 4)
-    " Maximum of four images allowed;"
+  ?:  (gth (lent images) 20)
+    " Maximum of twenty images allowed;"
   ~
 ++  validate-price
   |=  price=tape

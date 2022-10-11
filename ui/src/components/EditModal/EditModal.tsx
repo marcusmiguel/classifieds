@@ -1,15 +1,15 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Advertisement } from "../../types";
 import { Form } from "../Form/Form";
 import { CloseIcon, EditModalContainer, FormWrapper } from "./style";
 
 interface EditModalProps {
-    onConfirmFunction: Function,
     onCloseFunction: Function,
+    onConfirmFunction: Function,
     advertisement: Advertisement,
 };
 
-export const EditModal = ({ onConfirmFunction, onCloseFunction, advertisement }: EditModalProps) => {
+export const EditModal = ({ onCloseFunction, onConfirmFunction, advertisement }: EditModalProps) => {
 
     const handleEditModalContainerClick = (e) => {
         if (e.target == document.getElementById('editModalContainer')) {
@@ -21,7 +21,7 @@ export const EditModal = ({ onConfirmFunction, onCloseFunction, advertisement }:
         <EditModalContainer id="editModalContainer" onClick={handleEditModalContainerClick}>
             <FormWrapper>
                 <CloseIcon onClick={() => onCloseFunction()} />
-                <Form onCloseFunction={onCloseFunction} advertisement={advertisement} />
+                <Form onConfirmFunction={onConfirmFunction} advertisement={advertisement} />
             </FormWrapper>
         </EditModalContainer>
     )

@@ -1,24 +1,23 @@
 import { reactRenderer, sigil } from "@tlon/sigil-js";
-import moment from "moment";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import api from "../../api";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks/hooks";
 import { deleteAd, sendMessage, toggleFavorite } from "../../redux/slices/classifiedsSlice";
-import { Advertisement, Chat, TabContent } from "../../types";
-import { daToDate } from "../../util";
+import { Advertisement, Chat } from "../../types";
+import { daToDate, getAdById, locationHasPath } from "../../util";
 import { DeleteModal } from "../DeleteModal/DeleteModal";
 import { EditModal } from "../EditModal/EditModal";
 import { ForwardModal } from "../ForwardModal/ForwardModal";
-import { Desc, DetailsContainer, Publisher, Title, Image, Date, FavButton, FavIcon, ForwardButton, ForwardIcon, Actions, DeleteButton, DeleteIcon, Price, InfoRow, FirstSection, CloseIcon, PriceContainer, SourceContainer, PriceLabel, PublisherInfo, SecondaryImage, UpperRow, Tags, Tag, ImageColumn, InfoColumn, InfoBox, ChatButton, ChatIcon, FavIconClicked, Conversation, ConversationUpperRow, ConversationReceiver, ConversationReceiverShip, ConversationAdTitle, MessageList, SentMessage, MessageText, MessageDate, ReceivedMessage, SigilContainer, ReceivedMessageBox, ConversationBottomRow, Input, InputRow, SendIcon, NavigatedIcon, SecondaryImageRow, EditButton, EditIcon } from "./style";
+import { Desc, DetailsContainer, Publisher, Title, Image, Date, FavButton, FavIcon, Actions, DeleteButton, DeleteIcon, Price, FirstSection, CloseIcon, PriceContainer, SourceContainer, PriceLabel, PublisherInfo, SecondaryImage, UpperRow, Tags, Tag, Images, InfoColumn, InfoBox, ChatButton, ChatIcon, FavIconClicked, Conversation, ConversationUpperRow, ConversationReceiver, ConversationReceiverShip, ConversationAdTitle, MessageList, SentMessage, MessageText, MessageDate, ReceivedMessage, SigilContainer, ReceivedMessageBox, ConversationBottomRow, Input, InputRow, SendIcon, NavigatedIcon, EditButton, EditIcon, DescTitle, LeftArrow, RightArrow, ImageWrapper, SecondaryImages, DetailsBackground, GoBackIcon, ConversationWrapper, SmallScreenTitle, SmallScreenSourceContainer, PriceIcon } from "./style";
 
-interface DetailsProps {
-    advertisement: Advertisement,
-    setAd: Function,
-    contentToShow: string
-}
+export const Details = () => {
 
-export const Details = ({ advertisement, setAd, contentToShow }: DetailsProps) => {
+    const { id } = useParams();
+    const advertisement: Advertisement | null = getAdById(id);
+
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
     const favorites = useAppSelector((state) => state.classifieds.data.favorites);
     const chats = useAppSelector((state) => state.classifieds.data.chats);
     const [chat, setChat] = useState<Chat | undefined>();
@@ -27,43 +26,55 @@ export const Details = ({ advertisement, setAd, contentToShow }: DetailsProps) =
     const [displayEditModal, setDisplayEditModal] = useState(false);
     const [displayForwardModal, setDisplayForwardModal] = useState(false);
     const [inputMessage, setInputMessage] = useState('');
-    const [mainImage, setMainImage] = useState<string>(advertisement.images[0]);
-    const [secondaryImages, setSecondaryImages] = useState<string[]>([...advertisement.images.slice(1)])
+    const [mainImage, setMainImage] = useState<number | undefined>(0);
+    const [secondaryImages, setSecondaryImages] = useState<string[] | undefined>(advertisement?.images);
     const [isFavorited, setIsFavorited] = useState(false);
-
-    useEffect(() => {
-        if (favorites)
-            setIsFavorited(favorites?.includes(advertisement.id))
-    }, [favorites]);
-
-    useEffect(() => {
-        console.log(advertisement)
-    }, [advertisement]);
-
+    const [showImageArrows, setShowImageArrows] = useState(false);
 
     useEffect(() => {
         document.body.style.overflow = "hidden";
 
-        document.addEventListener(
-            "click",
-            function (event) {
-                var clicked = event.target as Element;
-                var chat = document.getElementById('detailsConversation');
-                var chatButton = document.getElementById('detailsChatButton');
+        const handleKeyDown = (e) => {
+            if (e.key == 'ArrowLeft') {
+                handleLeftArrowClick();
+            }
+            else if (e.key == 'ArrowRight') {
+                handleRightArrowClick();
+            }
+        };
 
-                if (
-                    clicked != chat && !chat?.contains(clicked) && clicked != chatButton && !chatButton?.contains(clicked)
-                ) {
-                    setDisplayChat(false);
-                    scrollToTop();
-                }
-            },
-            false
-        )
+        window.addEventListener("popstate", handleGoBack);
+        window.addEventListener("keydown", handleKeyDown);
+
+        return () => {
+            window.removeEventListener("popstate", () => { });
+            window.removeEventListener("keydown", () => { });
+        }
     }, []);
 
     useEffect(() => {
-        if (chats) {
+        if (favorites && advertisement)
+            setIsFavorited(favorites?.includes(advertisement.id))
+    }, [favorites]);
+
+    useEffect(() => {
+        let nextImageElem = document.querySelector(`[data-index='${mainImage}']`);
+        nextImageElem?.scrollIntoView(true);
+    }, [mainImage]);
+
+    useEffect(() => {
+        if (advertisement?.images && advertisement?.images.length > 0) {
+            setMainImage(0);
+            setSecondaryImages(advertisement?.images);
+        }
+        else {
+            setMainImage(undefined);
+            setSecondaryImages(undefined);
+        }
+    }, [advertisement]);
+
+    useEffect(() => {
+        if (chats && advertisement) {
             let newchat = [...chats].filter(chat => chat["advertisement-id"] == advertisement.id)[0];
             setChat(newchat);
 
@@ -79,39 +90,49 @@ export const Details = ({ advertisement, setAd, contentToShow }: DetailsProps) =
         }
     }, [chats]);
 
-    const handleDetailsClose = () => {
-        setAd();
-        document.body.style.overflow = "auto";
-    }
-
     const handleFavButtonClick = () => {
         setIsFavorited(!isFavorited);
-        dispatch(toggleFavorite({ id: advertisement.id }));
+        advertisement && dispatch(toggleFavorite({ id: advertisement.id }));
     }
 
-    const handleDeleteModalConfirm = () => {
-        dispatch(deleteAd({ id: advertisement.id }));
-        setAd();
-        document.body.style.overflow = "auto";
-        setDisplayDeleteModal(false);
-    };
+    const handleImageClick = (e, index) => {
+        if (secondaryImages) {
+            setMainImage(index);
 
-    const handleImageClick = (e) => {
-        let secondaryImagesCopy = [...secondaryImages];
-        let newmainimage = secondaryImagesCopy[secondaryImages.indexOf(e.currentTarget.dataset.value)];
-        secondaryImagesCopy[secondaryImages.indexOf(e.currentTarget.dataset.value)] = mainImage;
-
-        setSecondaryImages(secondaryImagesCopy);
-        setMainImage(newmainimage);
+            let clickedImage = e.target;
+            if (clickedImage) {
+                clickedImage.scrollIntoView(true);
+            }
+        }
     };
 
     const handleChatButtonClick = () => {
         if (displayChat) {
-            setDisplayChat(false);
+            handleChatClose();
             scrollToTop();
+            navigate(-1);
         }
         else {
+            let detailsBackground = document.getElementById("detailsBackground");
+            detailsBackground!.addEventListener(
+                "click",
+                function (event) {
+                    var clicked = event.target as Element;
+                    var chat = document.getElementById('detailsConversation');
+                    var chatButton = document.getElementById('detailsChatButton');
+                    if (
+                        clicked != chat && chat && !chat?.contains(clicked) && clicked != chatButton && !chatButton?.contains(clicked)
+                    ) {
+                        navigate(-1);
+                        scrollToTop();
+                        handleChatClose();
+                    }
+                },
+                { once: true }
+            )
+
             setDisplayChat(true);
+            window.history.pushState({ page: 'chat' }, '', '');
 
             setTimeout(() => {
                 let messageList = document.getElementById("detailsMessageList");
@@ -120,20 +141,13 @@ export const Details = ({ advertisement, setAd, contentToShow }: DetailsProps) =
                     messageList.scrollIntoView(true);
                 }
             }, 100);
-
-            let detailsContainer = document.getElementById("detailsContainer");
-            if (detailsContainer) {
-                detailsContainer.style.overflow = "hidden";
-                detailsContainer.style.overflowY = "auto";
-            }
         }
     }
 
     const scrollToTop = () => {
-        let detailsContainer = document.getElementById("detailsContainer");
-        if (detailsContainer) {
-            detailsContainer.scrollTop = 0;
-            detailsContainer.style.overflow = "hidden";
+        let detailsBackground = document.getElementById("detailsBackground");
+        if (detailsBackground) {
+            detailsBackground.scrollTop = 0;
         }
     }
 
@@ -144,7 +158,7 @@ export const Details = ({ advertisement, setAd, contentToShow }: DetailsProps) =
 
     const handleSendMessage = () => {
         if (inputMessage.trim().length == 0) return
-        dispatch(sendMessage({ 'advertisement-id': advertisement.id, to: advertisement.ship, text: inputMessage }))
+        advertisement && dispatch(sendMessage({ 'advertisement-id': advertisement.id, to: advertisement.ship, text: inputMessage }));
         setInputMessage('');
     }
 
@@ -154,44 +168,162 @@ export const Details = ({ advertisement, setAd, contentToShow }: DetailsProps) =
         }
     }
 
-    const onEditCloseFunction = () => {
-        setDisplayEditModal(false);
+    const handleCloseEditModalClick = () => {
+        navigate(-1);
+        handleCloseEditModal();
     }
 
+    const handleEditModalConfirm = () => {
+        navigate(-1);
+        handleCloseEditModal();
+    }
+
+    const handleCloseEditModal = () => {
+        setDisplayEditModal(false);
+        let detailsBackground = document.getElementById('detailsBackground');
+        if (detailsBackground) {
+            detailsBackground.style.overflowX = 'hidden';
+            detailsBackground.style.overflowY = 'auto';
+        }
+    }
+
+    const handleOpenEditModal = () => {
+        document.getElementById('detailsBackground')!.style.overflow = 'hidden';
+        window.history.pushState({ page: 'edit' }, '', '');
+
+        setDisplayEditModal(true);
+    }
+
+    const handleOpenDeleteModal = () => {
+        window.history.pushState({ page: 'delete' }, '', '');
+        setDisplayDeleteModal(true);
+    }
+
+    const handleDetailsClose = () => {
+        navigate(-1);
+        document.body.style.overflowY = "auto";
+    }
+
+    const handleDeleteModalConfirm = () => {
+        advertisement && dispatch(deleteAd({ id: advertisement.id }));
+        navigate(-1);
+        handleDeleteModalClose();
+        handleDetailsClose();
+    };
+
+    const handleDeleteModalCloseClick = () => {
+        navigate(-1);
+        handleDeleteModalClose();
+    };
+
+    const handleDeleteModalClose = () => {
+        setDisplayDeleteModal(false);
+    };
+
+    const handleRightArrowClick = () => {
+        if (secondaryImages && (mainImage != undefined)) {
+
+            setMainImage(prev => {
+                if (prev == undefined) return 0;
+
+                let index = prev;
+                if ((index + 1) != secondaryImages.length) {
+                    index = prev + 1;
+                }
+
+                return index;
+            }
+            );
+        }
+    };
+
+    const handleLeftArrowClick = () => {
+        if (secondaryImages && (mainImage != undefined)) {
+            setMainImage(prev => {
+                if (prev == undefined) return 0;
+                var index = prev;
+                if ((index - 1) != -1) {
+                    index -= 1;
+                }
+
+                return index;
+            });
+        }
+    };
+
+    const handleGoBack = () => {
+        handleChatClose();
+        handleCloseEditModal();
+        handleDeleteModalClose();
+    };
+
+    const handleChatCloseClick = () => {
+        navigate(-1);
+        handleChatClose();
+        scrollToTop();
+    };
+
+    const handleChatClose = () => {
+        let detailsBackground = document.getElementById("detailsBackground");
+
+        if (detailsBackground) {
+            detailsBackground.removeEventListener("click", () => { });
+        }
+
+        setDisplayChat(false);
+    };
+
     return (
-        <DetailsContainer id="detailsContainer" >
-            <UpperRow>
-                {contentToShow == TabContent[TabContent.ads] ? 'Ads' : 'My Ads'} <NavigatedIcon /> Details
-                <CloseIcon onClick={handleDetailsClose} />
-            </UpperRow>
-            <FirstSection>
-                <ImageColumn >
-                    {mainImage ?
-                        <Image src={mainImage} />
-                        :
-                        <Image src={'/apps/classifieds/assets/placeholder.png'} />
-                    }
-                    <SecondaryImageRow>
-                        {secondaryImages[0] && <SecondaryImage src={secondaryImages[0]} data-value={secondaryImages[0]} onClick={handleImageClick} />}
-                        {secondaryImages[1] && <SecondaryImage src={secondaryImages[1]} data-value={secondaryImages[1]} onClick={handleImageClick} />}
-                        {secondaryImages[2] && <SecondaryImage src={secondaryImages[2]} data-value={secondaryImages[2]} onClick={handleImageClick} />}
-                    </SecondaryImageRow>
-                </ImageColumn>
-                <InfoColumn>
-                    <InfoBox>
-                        <Title>{advertisement?.title}
-                        </Title>
-                        <Desc>{advertisement?.desc}</Desc>
-                        <InfoRow>
-                            {advertisement.price.trim().length == 0 ?
-                                <PriceContainer />
-                                :
-                                <PriceContainer>
-                                    <PriceLabel>
-                                        Price
-                                    </PriceLabel>
-                                    <Price>{advertisement.price}</Price>
-                                </PriceContainer>}
+        <DetailsBackground id="detailsBackground" >
+            <DetailsContainer >
+                {displayEditModal &&
+                    advertisement && <EditModal onConfirmFunction={handleEditModalConfirm} onCloseFunction={handleCloseEditModalClick} advertisement={advertisement} />
+                }
+                <UpperRow>
+                    {locationHasPath('/ads') ? 'Ads' : 'My Ads'} <NavigatedIcon /> Details
+                    <CloseIcon onClick={handleDetailsClose} />
+                </UpperRow>
+                {advertisement && <FirstSection>
+                    <SmallScreenTitle>{advertisement?.title}
+                    </SmallScreenTitle>
+                    <SmallScreenSourceContainer>
+                        <PublisherInfo>
+                            {advertisement.ship && advertisement.ship.length <= 14 &&
+                                sigil({
+                                    patp: advertisement.ship,
+                                    renderer: reactRenderer,
+                                    size: 18,
+                                    colors: ['white', 'black'],
+                                })
+                            }
+                            <Publisher>
+                                {advertisement?.ship == ('~' + api.ship!) ? 'You' : advertisement?.ship}
+                            </Publisher>
+                        </PublisherInfo>
+                        <Date>{daToDate(advertisement.date).fromNow()}</Date>
+                    </SmallScreenSourceContainer>
+                    <Images >
+                        {((mainImage != undefined) && secondaryImages) ?
+                            <ImageWrapper id="image-wrapper" onMouseEnter={() => setShowImageArrows(true)} onMouseLeave={() => setShowImageArrows(false)}>
+                                {secondaryImages && secondaryImages.length > 1 && <LeftArrow $toShow={showImageArrows} $disabled={(mainImage == 0)} onClick={() => handleLeftArrowClick()} />}
+                                <Image src={secondaryImages[mainImage]} />
+                                {secondaryImages && secondaryImages.length > 1 && < RightArrow $toShow={showImageArrows} $disabled={(mainImage == secondaryImages.length - 1)} onClick={() => handleRightArrowClick()} />}
+                            </ImageWrapper>
+                            :
+                            <Image src={'/apps/classifieds/assets/placeholder.png'} />
+                        }
+                        {secondaryImages && secondaryImages.length > 1 && <SecondaryImages>
+                            {
+                                secondaryImages.map(
+                                    (img, index) => <SecondaryImage data-index={index} key={index} src={img} data-value={img} onClick={(e) => handleImageClick(e, index)} isSelected={(index == mainImage)} />
+                                )
+                            }
+                        </SecondaryImages>}
+                    </Images>
+                    <InfoColumn>
+                        <InfoBox>
+                            <Title>{advertisement?.title}
+                            </Title>
                             <SourceContainer>
                                 <PublisherInfo>
                                     {advertisement.ship && advertisement.ship.length <= 14 &&
@@ -206,95 +338,108 @@ export const Details = ({ advertisement, setAd, contentToShow }: DetailsProps) =
                                         {advertisement?.ship == ('~' + api.ship!) ? 'You' : advertisement?.ship}
                                     </Publisher>
                                 </PublisherInfo>
-                                <Date>{daToDate(advertisement!.date!).fromNow()}</Date>
+                                <Date>{daToDate(advertisement.date).fromNow()}</Date>
                             </SourceContainer>
-                        </InfoRow>
-                    </InfoBox>
-                    <Actions>
-                        {contentToShow == TabContent[TabContent.ads] ?
-                            <>
-                                <FavButton isFavorited={isFavorited} onClick={() => handleFavButtonClick()} >
-                                    {isFavorited ? <><FavIconClicked />Favorited</> : <><FavIcon />Favorite</>}
-                                </FavButton>
-                                {/* <ForwardButton onClick={() => setDisplayForwardModal(true)}>
+                            <Desc>{advertisement?.desc}</Desc>
+                            {advertisement.price.trim().length == 0 ?
+                                <PriceContainer />
+                                :
+                                <PriceContainer>
+                                    <PriceLabel>
+                                        <PriceIcon></PriceIcon> Price
+                                    </PriceLabel>
+                                    <Price>{advertisement?.price}</Price>
+                                </PriceContainer>}
+                        </InfoBox>
+                        <Actions>
+                            {locationHasPath('/ads') ?
+                                <>
+                                    <FavButton isFavorited={isFavorited} onClick={() => handleFavButtonClick()} >
+                                        {isFavorited ? <><FavIconClicked />Favorited</> : <><FavIcon />Favorite</>}
+                                    </FavButton>
+                                    {/* <ForwardButton onClick={() => setDisplayForwardModal(true)}>
                                     <ForwardIcon />Forward
                                 </ForwardButton> */}
-                                <ChatButton id="detailsChatButton" onClick={handleChatButtonClick}>
-                                    <ChatIcon />Chat
-                                </ChatButton>
-                            </>
-                            :
-                            <>
-                                <EditButton onClick={() => setDisplayEditModal(true)}>
-                                    <EditIcon />Edit
-                                </EditButton>
-                                <DeleteButton onClick={() => setDisplayDeleteModal(true)}>
-                                    <DeleteIcon />Delete
-                                </DeleteButton>
-                            </>
-                        }
-                        {displayDeleteModal &&
-                            <DeleteModal onConfirmFunction={handleDeleteModalConfirm} onCancelFunction={() => setDisplayDeleteModal(false)} />
-                        }
-                        {displayEditModal &&
-                            <EditModal onConfirmFunction={handleDeleteModalConfirm} onCloseFunction={onEditCloseFunction} advertisement={advertisement} />
-                        }
-                        {displayForwardModal &&
-                            <ForwardModal advertisement={advertisement} setDisplayForwardModal={setDisplayForwardModal}></ForwardModal>
-                        }
-                    </Actions>
-                    {displayChat && <Conversation id="detailsConversation">
-                        <ConversationUpperRow>
-                            <ConversationReceiver>
-                                {advertisement.ship && advertisement.ship.length <= 14 &&
-                                    sigil({
-                                        patp: advertisement.ship,
-                                        renderer: reactRenderer,
-                                        size: 20,
-                                        colors: ['white', 'black'],
-                                    })
-                                }
-                                <ConversationReceiverShip>
-                                    {advertisement.ship}
-                                </ConversationReceiverShip>
-                            </ConversationReceiver>
-                            <ConversationAdTitle>{advertisement.title}</ConversationAdTitle>
-                        </ConversationUpperRow>
-                        <MessageList id='detailsMessageList'>
-                            {chat?.msgs.map((msg, index) =>
-                                msg.ship == "~" + api.ship ?
-                                    <SentMessage key={index}><MessageText>{msg.text}</MessageText><MessageDate>{daToDate(msg.date).fromNow()}</MessageDate></SentMessage>
-                                    :
-                                    <ReceivedMessage key={index}>
-                                        {/* {!(chat.msgs[index] && chat.msgs[index].ship != '~' + api.ship) && */}
-                                        <SigilContainer>
-                                            {
-                                                msg.ship && msg.ship.length <= 14 &&
+                                    <ChatButton id="detailsChatButton" onClick={handleChatButtonClick}>
+                                        <ChatIcon />Chat
+                                    </ChatButton>
+                                </>
+                                :
+                                <>
+                                    <EditButton onClick={handleOpenEditModal}>
+                                        <EditIcon />Edit
+                                    </EditButton>
+                                    <DeleteButton onClick={handleOpenDeleteModal}>
+                                        <DeleteIcon />Delete
+                                    </DeleteButton>
+                                </>
+                            }
+                            {displayDeleteModal &&
+                                <DeleteModal onConfirmFunction={handleDeleteModalConfirm} onCancelFunction={handleDeleteModalCloseClick} />
+                            }
+
+                            {displayForwardModal &&
+                                <ForwardModal advertisement={advertisement} setDisplayForwardModal={setDisplayForwardModal}></ForwardModal>
+                            }
+                        </Actions>
+                        {displayChat &&
+                            <ConversationWrapper>
+                                <Conversation id="detailsConversation">
+                                    <GoBackIcon onClick={() => handleChatCloseClick()}></GoBackIcon>
+                                    <ConversationUpperRow>
+                                        <ConversationReceiver>
+                                            {advertisement.ship && advertisement.ship.length <= 14 &&
                                                 sigil({
-                                                    patp: msg.ship,
+                                                    patp: advertisement.ship,
                                                     renderer: reactRenderer,
                                                     size: 20,
                                                     colors: ['white', 'black'],
                                                 })
                                             }
-                                        </SigilContainer>
-                                        <ReceivedMessageBox>
-                                            <MessageText>{msg.text}</MessageText>
-                                            <MessageDate>{daToDate(msg.date).fromNow()}</MessageDate>
-                                        </ReceivedMessageBox>
-                                    </ReceivedMessage>
-                            )
-                            }
-                        </MessageList>
-                        <ConversationBottomRow >
-                            <InputRow>
-                                <Input placeholder="Write your message" onChange={handleInputChange} onKeyPress={handleKeyPress} value={inputMessage} />
-                                <SendIcon onClick={handleSendMessage} />
-                            </InputRow>
-                        </ConversationBottomRow>
-                    </Conversation>}
-                </InfoColumn>
-            </FirstSection>
-        </DetailsContainer >
+                                            <ConversationReceiverShip>
+                                                {advertisement?.ship}
+                                            </ConversationReceiverShip>
+                                        </ConversationReceiver>
+                                        <ConversationAdTitle>{advertisement?.title}</ConversationAdTitle>
+                                    </ConversationUpperRow>
+                                    <MessageList id='detailsMessageList'>
+                                        {chat?.msgs.map((msg, index) =>
+                                            msg.ship == "~" + api.ship ?
+                                                <SentMessage key={index}><MessageText>{msg.text}</MessageText><MessageDate>{daToDate(msg.date).fromNow()}</MessageDate></SentMessage>
+                                                :
+                                                <ReceivedMessage key={index}>
+                                                    {/* {!(chat.msgs[index] && chat.msgs[index].ship != '~' + api.ship) && */}
+                                                    <SigilContainer>
+                                                        {
+                                                            msg.ship && msg.ship.length <= 14 &&
+                                                            sigil({
+                                                                patp: msg.ship,
+                                                                renderer: reactRenderer,
+                                                                size: 20,
+                                                                colors: ['white', 'black'],
+                                                            })
+                                                        }
+                                                    </SigilContainer>
+                                                    <ReceivedMessageBox>
+                                                        <MessageText>{msg.text}</MessageText>
+                                                        <MessageDate>{daToDate(msg.date).fromNow()}</MessageDate>
+                                                    </ReceivedMessageBox>
+                                                </ReceivedMessage>
+                                        )
+                                        }
+                                    </MessageList>
+                                    <ConversationBottomRow >
+                                        <InputRow>
+                                            <Input placeholder="Type your message..." onChange={handleInputChange} onKeyPress={handleKeyPress} value={inputMessage} />
+                                            <SendIcon onClick={handleSendMessage} />
+                                        </InputRow>
+                                    </ConversationBottomRow>
+                                </Conversation>
+                            </ConversationWrapper>
+                        }
+                    </InfoColumn>
+                </FirstSection>}
+            </DetailsContainer >
+        </DetailsBackground>
     )
 }

@@ -146,9 +146,6 @@ export const publishAd = createAsyncThunk('publishAd', async (data: publishAdDat
 });
 
 export const editAd = createAsyncThunk('editAd', async (data: editAdData, thunkAPI) => {
-    // let state = thunkAPI.getState() as RootState;
-    // let newmyads = state.classifieds.data.myads?.map(ad => ad.id == data.ad.id ? { ...ad, title: ad.title, desc: ad.desc, images: ad.images, price: ad.price, forward: ad.forward } : ad);
-    // thunkAPI.dispatch(setMyAds(newmyads));
     api.poke(
         {
             app: 'classifieds',
@@ -168,6 +165,9 @@ export const editAd = createAsyncThunk('editAd', async (data: editAdData, thunkA
 });
 
 export const deleteAd = createAsyncThunk('toggleFavorite', async (data: deleteAdData, thunkAPI) => {
+    // let state = thunkAPI.getState() as RootState;;
+    // thunkAPI.dispatch(setMyAds(state.classifieds.data.myads?.filter(x => x.id != data.id)));
+
     api.poke(
         {
             app: 'classifieds',
@@ -211,7 +211,6 @@ export const sendMessage = createAsyncThunk('sendMessage', async (data: sendMess
         }
     );
 });
-
 
 const classifiedsSlice = createSlice({
     name: "classifieds",
