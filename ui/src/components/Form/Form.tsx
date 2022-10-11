@@ -7,7 +7,7 @@ import { AddedImage, AddedImageContainer, AddedImagesRow, AddIcon, AddImageButto
 
 interface FormProps {
   advertisement?: Advertisement,
-  onCloseFunction?: Function,
+  onConfirmFunction?: Function,
 }
 
 interface formValues {
@@ -19,7 +19,7 @@ interface formValues {
   forward: boolean,
 }
 
-export const Form = ({ advertisement, onCloseFunction }: FormProps) => {
+export const Form = ({ advertisement, onConfirmFunction }: FormProps) => {
   const dispatch = useAppDispatch();
   const [formValues, setFormValues] = useState<formValues>({ title: '', desc: '', tags: [], price: '', images: [], forward: true });
   const [formErrors, setFormErrors] = useState({ title: "", });
@@ -59,12 +59,11 @@ export const Form = ({ advertisement, onCloseFunction }: FormProps) => {
       }
       dispatch(editAd(payload));
 
-      if (onCloseFunction)
-        onCloseFunction();
+      if (onConfirmFunction)
+        onConfirmFunction();
     }
     else {
       dispatch(publishAd({ formValues: formValues }))
-
     }
     setFormValues({ title: '', desc: '', price: '', tags: [], images: [], forward: true });
     setInputUrl('');
@@ -86,7 +85,7 @@ export const Form = ({ advertisement, onCloseFunction }: FormProps) => {
   };
 
   const handleUrlSubmit = () => {
-    if (formValues.images.length < 4 && inputUrl) {
+    if (formValues.images.length < 20 && inputUrl) {
       setFormValues({ ...formValues, images: [...formValues.images, inputUrl] });
       setInputUrl('');
     }
@@ -99,7 +98,7 @@ export const Form = ({ advertisement, onCloseFunction }: FormProps) => {
   }
 
   useEffect(() => {
-    if (formValues.images.length >= 4) {
+    if (formValues.images.length >= 20) {
       setDisableAdImages(true);
     };
   }, [formValues.images]);

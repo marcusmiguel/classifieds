@@ -37,13 +37,6 @@ export enum NotificationMessages {
     newMessage = 'Sent you a message.'
 };
 
-export enum TabContent {
-    ads,
-    myads,
-    chat,
-    newAd,
-};
-
 export interface Mutual {
     ship: string,
     forwardedAdsId: string[],

@@ -1,4 +1,6 @@
 import moment from "moment";
+import { useLocation } from "react-router-dom";
+import { useAppSelector } from "./redux/hooks/hooks";
 
 export const daToDate = da => {
     const time = da.slice(1).split(".")!;
@@ -11,3 +13,20 @@ export const daToDate = da => {
 
     return moment.utc(year + '-' + month + '-' + day + ' ' + hour + ':' + min + ':' + sec);
 };
+
+export const getAdById = (id) => {
+    const { ads, myads } = useAppSelector((state) => state.classifieds.data);
+
+    let inAds = ads?.filter(x => x.id == id);
+    if (inAds && inAds?.length > 0) {
+        return inAds[0];
+    }
+    let inMyAds = myads?.filter(x => x.id == id);
+    return (inMyAds && inMyAds.length > 0) ? inMyAds[0] : null;
+}
+
+export const locationHasPath = (path) => {
+    let location = useLocation();
+
+    return location.pathname.indexOf(path) > -1;
+}

@@ -1,12 +1,18 @@
+import { MdOutlineArrowBackIosNew } from 'react-icons/md';
 import { RiSendPlane2Line } from 'react-icons/ri';
 import styled from 'styled-components';
 
 export const ChatContainer = styled.div`
     padding: 1.5em 1.5em;
     margin-left: 16%;
-    // width: 100%;
-    // height: 100%;
+    width: 84%;
     background: rgba(253,253,253,1);
+
+    @media (max-width: 1150px) {
+        margin: 3em 0 0 0;
+        padding: 1.5em 3%;
+        width: 100%;
+    };
 `;
 
 export const ChatTitle = styled.div`
@@ -23,9 +29,14 @@ export const ChatSection = styled.div`
 `;
 
 export const ChatList = styled.div`
-    width: 17rem;
+    width: 40%;
     height: 100%;
+
+    @media (max-width: 600px) {
+        width: 100%;
+    }
 `;
+
 interface ChatCardProps {
     isActive: boolean,
 }
@@ -47,17 +58,45 @@ export const ChatCard = styled.div<ChatCardProps>`
     &:hover{
         box-shadow: rgba(50, 50, 93, 0.25) 0px 4px 10px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
     }
+`;
 
+export const GoBackIcon = styled(MdOutlineArrowBackIosNew)`
+    visibility: hidden;
+    @media (max-width: 600px) {
+        visibility: visible;
+    };
+    z-index: 200;
+    left: .5em;
+    top: 7.5%;
+    transform: translateY(-50%);
+    position: absolute;
 `;
 
 export const Conversation = styled.div`
     border-radius: .5em;
-    width: 43%; 
     box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px 0px;
-    height: 21rem;
     position: fixed;
-    margin-left: 36%;
+    right: 1.5em;
     background: white;
+    width: 40%; 
+    max-width: 35em;
+    height: 23em;
+
+    @media (max-width: 1150px) {
+        width: 50%; 
+        right: 1em;
+    }
+
+    @media (max-width: 600px) {
+        z-index: 200;
+        width: 100%; 
+        height: 100%;
+        right: 0;
+        top: 0;
+        border-radius: 0;
+        box-shadow: none;
+        position: fixed;
+    }
 `;
 
 export const CardUpperRow = styled.div`
@@ -110,7 +149,6 @@ export const ConversationUpperRow = styled.div`
     align-items: center;
     justify-content: center;
     height: 15%;
-    
 `;
 
 export const ConversationBottomRow = styled.div`
@@ -142,7 +180,22 @@ export const MessageList = styled.div`
     overflow-y: auto;
     overflow-x: hidden;
 
-    `;
+    ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+    }
+    ::-webkit-scrollbar-track {
+        border: 1px solid rgba(0,0,0,.2);
+        background: rgba(253,253,253,1);
+        border-top-right-radius: .25rem; 
+        border-bottom-right-radius: .25rem; 
+    }
+    ::-webkit-scrollbar-thumb {
+        border-radius: .25rem;
+        background: white;
+        box-shadow: inset 0 0 1px 1px rgba(0,0,0,.6);
+    }
+`;
 
 export const SentMessage = styled.div`
     border: 1px solid rgba(0, 0, 0, .2);
@@ -208,7 +261,7 @@ export const MessageDate = styled.div`
 `;
 
 export const InputRow = styled.div`
-    height: 3rem;
+    height: 100%;
     width: 100%;
     display: flex;
     align-items: center;
@@ -218,6 +271,8 @@ export const InputRow = styled.div`
 
 export const Input = styled.input`
     width: 100%;
+    height: 50%;
+    max-height: 2.5rem;
     border: 1px solid rgba(0, 0, 0, .2);
     box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
     border-radius: .25rem;
@@ -251,6 +306,10 @@ export const ConversationAdTitle = styled.div`
     width: 100%;
     padding: 0 1em;
     text-align: center;
+
+    @media (max-width: 600px) {
+        padding: 0 3.5em;
+    }
 `;
 
 export const EmptyListMessage = styled.div`

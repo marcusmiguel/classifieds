@@ -1,23 +1,27 @@
 import { reactRenderer, sigil } from "@tlon/sigil-js";
 import moment from "moment";
 import React from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import api from "../../api";
 import { useAppSelector } from "../../redux/hooks/hooks";
 import { Advertisement } from "../../types";
-import { daToDate } from "../../util";
-import { CardContainer, Image, Publisher, Title, Date, ForwardIcon, BottomRow, DeleteIcon, FavIcon, Price, ContentContainer, MiddleRow, Icons, PublisherInfo, PriceLabel, PriceContainer, SourceContainer } from './style';
+import { daToDate, locationHasPath } from "../../util";
+import { CardContainer, Image, Publisher, Title, Date, ForwardIcon, BottomRow, DeleteIcon, FavIcon, Price, ContentContainer, MiddleRow, Icons, PublisherInfo, PriceLabel, PriceContainer, SourceContainer, PriceIcon } from './style';
 
 interface CardProps {
     advertisement: Advertisement,
-    setAdToShow: Function,
 };
 
-export const Card = ({ advertisement, setAdToShow }: CardProps) => {
+export const Card = ({ advertisement }: CardProps) => {
     const formatedDate = daToDate(advertisement!.date!).fromNow();
     const favorites = useAppSelector((state) => state.classifieds.data.favorites);
+    const navigate = useNavigate();
+    let location = useLocation();
 
     const handleCardClick = () => {
-        setAdToShow(advertisement);
+        location.pathname.indexOf('/ads') > -1 ?
+            navigate(`/ads/${advertisement.id}`) :
+            navigate(`/myads/${advertisement.id}`)
     }
 
     return (
@@ -37,7 +41,7 @@ export const Card = ({ advertisement, setAdToShow }: CardProps) => {
                         <PriceContainer /> :
                         <PriceContainer>
                             <PriceLabel>
-                                Price
+                                <PriceIcon></PriceIcon> Price
                             </PriceLabel>
                             <Price>{advertisement?.price}</Price>
                         </PriceContainer>}

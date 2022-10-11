@@ -1,57 +1,45 @@
-import { sigil, reactRenderer } from "@tlon/sigil-js";
 import React, { useEffect, useState } from "react";
-import { Advertisement, NotificationMessages, TabContent, Notification } from "../../types";
+import { Advertisement, NotificationMessages, Notification } from "../../types";
 import { Card } from "../Card/Card";
-import { Details } from "../Details/Details";
 import { Pagination } from "../Pagination/Pagination";
-import { Dropdown, DropdownIcon, DropdownModal, DropdownOption, DropdownText, EmptyListMessage, FilterUpperRow, ListContainer, ListGrid, NotificationButton, NotificationIcon, SearchBar, SearchContainer, SearchIcon, ShipName, Tag, Tags, Title, Unread, UpperRow, UserInfo, UserInfoContainer, } from './style';
-import { NotificationsModal } from "../NotificationsModal/NotificationsModal";
-import moment from "moment";
-import { useAppDispatch, useAppSelector } from '../../redux/hooks/hooks';
-import api from "../../api";
+import { Dropdown, DropdownIcon, DropdownModal, DropdownOption, DropdownText, EmptyListMessage, FilterUpperRow, ListContainer, ListGrid, SearchBar, SearchContainer, SearchIcon, Tag, Tags, Title, } from './style';
+import { useAppSelector } from '../../redux/hooks/hooks';
+import { locationHasPath } from "../../util";
+import { useParams } from "react-router-dom";
 
 interface ListProps {
     listAds: Advertisement[] | null,
-    contentToShow: string
 };
 
-export const List = ({ listAds, contentToShow }: ListProps) => {
-    const [currentAds, setCurrentAds] = useState<Advertisement[]>([]);
+export const List = ({ listAds }: ListProps) => {
+
+    const [adsToShow, setAdsToShow] = useState<Advertisement[]>([]);
     const [forwardedAds, setForwardedAds] = useState<Advertisement[]>([]);
     const { favorites } = useAppSelector((state) => state.classifieds.data);
-
-    const [adToShow, setAdToShow] = useState<Advertisement>();
     const [adsQuery, setQuery] = useState('');
     const [debouncedAdsQuery, setDebouncedAdsQuery] = useState(adsQuery);
-    const [queriedAds, setQueriedAds] = useState<Advertisement[] | null>([]);
-
+    const [queriedAds, setQueriedAds] = useState<Advertisement[] | null>(listAds);
     const [dropdownContent, setDropdownContent] = useState('All');
     const [displayDropdownModal, setDisplayDropdownModal] = useState(false);
+    // const [displayNotifications, setDisplayNotifications] = useState(false);
 
-    const [displayNotifications, setDisplayNotifications] = useState(false);
-
-    let hardcodedNotifications: Notification[] = [];
-    if (listAds && listAds != null && listAds?.length > 1) {
-        hardcodedNotifications = [{ ship: '~harlys-forbec', text: NotificationMessages.newForwardedAd, date: moment!.utc()!.format(), "advertisement-id": listAds[0].id }, { ship: '~fidwed-sipwyn', text: NotificationMessages.newMessage, date: moment!.utc()!.format(), "advertisement-id": listAds[1].id }]
-    }
-    const [unreadNotifications, setUnreadNotifications] = useState(hardcodedNotifications);
+    // let hardcodedNotifications: Notification[] = [];
+    // if (listAds && listAds != null && listAds?.length > 1) {
+    //     hardcodedNotifications = [{ ship: '~harlys-forbec', text: NotificationMessages.newForwardedAd, date: moment!.utc()!.format(), "advertisement-id": listAds[0].id }, { ship: '~fidwed-sipwyn', text: NotificationMessages.newMessage, date: moment!.utc()!.format(), "advertisement-id": listAds[1].id }]
+    // }
+    // const [unreadNotifications, setUnreadNotifications] = useState(hardcodedNotifications);
 
     const onPageChanged = data => {
         const { newCurrentPage, newPageLimit } = data;
         const offset = (newCurrentPage - 1) * newPageLimit;
         const newCurrentAds = queriedAds!.slice(offset, offset + newPageLimit);
-        setCurrentAds([...newCurrentAds]);
+        setAdsToShow([...newCurrentAds]);
     };
 
     const handleSearchAdsQueryChange = (e) => {
         const { value } = e.target;
         setDebouncedAdsQuery(value);
     };
-
-    const setAdToShowById = (id) => {
-        let ad = listAds?.filter(x => x.id == id)[0];
-        setAdToShow(ad);
-    }
 
     useEffect(() => {
         const timer = setTimeout(() => setQuery(debouncedAdsQuery), 300);
@@ -77,16 +65,13 @@ export const List = ({ listAds, contentToShow }: ListProps) => {
             setQueriedAds(newAds?.filter(x => x.title.toLowerCase().includes(adsQuery.toLowerCase()) || x.ship.toLowerCase().includes(adsQuery.toLowerCase()) || x.desc.toLowerCase().includes(adsQuery.toLowerCase())))
     }, [adsQuery, dropdownContent])
 
-    const handleNotificationsButtonClick = (e) => {
-        setDisplayNotifications(!displayNotifications);
-    };
+    // const handleNotificationsButtonClick = (e) => {
+    //     setDisplayNotifications(!displayNotifications);
+    // };
 
     useEffect(() => {
-        document.body.style.overflow = "scroll";
-        setAdToShow(undefined)
-    }, [contentToShow]);
+        document.body.style.overflowY = "auto";
 
-    useEffect(() => {
         document.addEventListener(
             "click",
             function (event) {
@@ -101,43 +86,21 @@ export const List = ({ listAds, contentToShow }: ListProps) => {
             },
             false
         )
+
     }, []);
 
     useEffect(() => {
         setQueriedAds(listAds)
-        setAdToShowById(adToShow?.id)
     }, [listAds]);
-
-    useEffect(() => {
-        setAdToShowById(adToShow?.id)
-    }, [favorites]);
 
     const renderTitle = () => {
         return (<>
-            <UpperRow>
-                <Title>{contentToShow == TabContent[TabContent.ads] && 'Ads'}
-                    {contentToShow == TabContent[TabContent.myads] && 'My Ads'}
-                </Title>
-                <UserInfoContainer>
-                    {/* <NotificationButton id="notificationBtn" onClick={handleNotificationsButtonClick}>
-                        {unreadNotifications.length > 0 && <Unread />}
-                        <NotificationIcon />
-                    </NotificationButton> */}
-                    <UserInfo>
-                        {api.ship && api.ship.length <= 14 &&
-                            sigil({
-                                patp: api.ship,
-                                renderer: reactRenderer,
-                                size: 20,
-                                colors: ['white', 'black'],
-                            })
-                        }
-                        <ShipName>~{api.ship}</ShipName>
-                    </UserInfo>
-                    {displayNotifications && <NotificationsModal notifications={unreadNotifications} setDisplayNotifications={setDisplayNotifications} setAdToShowById={setAdToShowById} setNotifications={setUnreadNotifications}></NotificationsModal>}
-                </UserInfoContainer>
-            </UpperRow>{
-                (contentToShow == TabContent[TabContent.ads]) &&
+            <Title>
+                {locationHasPath('/ads') && 'Ads'}
+                {locationHasPath('/myads') && 'My Ads'}
+            </Title>
+            {
+                locationHasPath('/ads') &&
                 <FilterUpperRow><SearchContainer><SearchIcon /><SearchBar placeholder="Search" value={debouncedAdsQuery} onChange={handleSearchAdsQueryChange} /></SearchContainer>
                     <Dropdown id="dropdown" onClick={() => setDisplayDropdownModal(!displayDropdownModal)}>
                         <DropdownText>{dropdownContent}</DropdownText>
@@ -158,7 +121,6 @@ export const List = ({ listAds, contentToShow }: ListProps) => {
 
     return (
         <>
-            {adToShow && <Details contentToShow={contentToShow} advertisement={adToShow} setAd={setAdToShow} />}
             <ListContainer>
                 {renderTitle()}
                 <ListGrid>
@@ -167,8 +129,8 @@ export const List = ({ listAds, contentToShow }: ListProps) => {
                             (queriedAds?.length == 0) ?
                                 <EmptyListMessage>No results found.</EmptyListMessage>
                                 :
-                                currentAds?.map((ad, index) =>
-                                    < Card key={index} advertisement={ad} setAdToShow={setAdToShow} />
+                                adsToShow?.map((ad, index) =>
+                                    < Card key={index} advertisement={ad} />
                                 )
                         )
                         :
