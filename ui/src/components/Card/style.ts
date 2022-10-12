@@ -103,6 +103,7 @@ export const Publisher = styled.span`
     line-height: 1em;
     font-style: italic;
     margin-left: .3em;
+    white-space: nowrap;
 `;
 
 export const Title = styled.div`
@@ -113,7 +114,6 @@ export const Title = styled.div`
     width: 100%;
     text-align: justify;
     word-break: break-all;
-    overflow: hidden;
 
     @media (max-width: 600px) {
         font-weight: 600;
@@ -123,6 +123,7 @@ export const Title = styled.div`
         -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
         max-height: 2.15rem;
+        overflow: hidden;
     }
 `;
 
@@ -136,6 +137,7 @@ export const Date = styled.span`
     font-size: .7rem;
     font-style: italic;
     height: 1.3em;
+    white-space: nowrap;
 `;
 
 export const PriceLabel = styled.span`
@@ -157,6 +159,11 @@ export const Price = styled.span`
     display: flex;
     align-content: center;
     word-break: break-all;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 
     @media (max-width: 600px) {
         font-size: .65rem;

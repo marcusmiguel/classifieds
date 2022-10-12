@@ -108,7 +108,6 @@ export const Tag = styled.span`
     &.active{
         background: rgba(0,0,0,.2);
     }
-
 `;
 
 export const CloseIcon = styled(RiCloseFill)`

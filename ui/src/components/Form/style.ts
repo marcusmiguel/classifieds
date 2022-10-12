@@ -13,7 +13,8 @@ export const FormContainer = styled.div`
     width: 10em;
     height: 100%;
     @media (max-width: 600px) {
-        width: 80%;
+        width: 100%;
+        padding: 1.5em 1em 1.5em 1em;
     }
 `;
 

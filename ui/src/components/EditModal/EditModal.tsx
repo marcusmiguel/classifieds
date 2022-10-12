@@ -25,5 +25,4 @@ export const EditModal = ({ onCloseFunction, onConfirmFunction, advertisement }:
             </FormWrapper>
         </EditModalContainer>
     )
-
 }

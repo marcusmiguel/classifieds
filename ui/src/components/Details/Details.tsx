@@ -47,6 +47,7 @@ export const Details = () => {
         window.addEventListener("keydown", handleKeyDown);
 
         return () => {
+            document.body.style.overflowY = "auto";
             window.removeEventListener("popstate", () => { });
             window.removeEventListener("keydown", () => { });
         }
@@ -201,7 +202,6 @@ export const Details = () => {
 
     const handleDetailsClose = () => {
         navigate(-1);
-        document.body.style.overflowY = "auto";
     }
 
     const handleDeleteModalConfirm = () => {
