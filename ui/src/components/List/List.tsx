@@ -32,8 +32,13 @@ export const List = ({ listAds }: ListProps) => {
     const onPageChanged = data => {
         const { newCurrentPage, newPageLimit } = data;
         const offset = (newCurrentPage - 1) * newPageLimit;
-        const newCurrentAds = queriedAds!.slice(offset, offset + newPageLimit);
-        setAdsToShow([...newCurrentAds]);
+        if (queriedAds) {
+            const newCurrentAds = queriedAds.slice(offset, offset + newPageLimit);
+            setAdsToShow([...newCurrentAds]);
+        }
+        else {
+            setAdsToShow([]);
+        }
     };
 
     const handleSearchAdsQueryChange = (e) => {

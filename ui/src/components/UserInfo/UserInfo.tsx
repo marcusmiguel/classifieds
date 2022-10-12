@@ -11,7 +11,7 @@ export const UserInfo = () => {
                   {unreadNotifications.length > 0 && <Unread />}
                   <NotificationIcon />
               </NotificationButton> */}
-            {api.ship &&
+            {api.ship ?
                 <ShipInfo>
                     {api.ship.length <= 14 &&
                         sigil({
@@ -22,7 +22,12 @@ export const UserInfo = () => {
                         })
                     }
                     <ShipName>~{api.ship}</ShipName>
-                </ShipInfo>}
+                </ShipInfo>
+                :
+                <ShipInfo>
+                    <ShipName>Connecting to ship...</ShipName>
+                </ShipInfo>
+            }
             {/* {displayNotifications && <NotificationsModal notifications={unreadNotifications} setDisplayNotifications={setDisplayNotifications} setAdToShowById={setAdToShowById} setNotifications={setUnreadNotifications}></NotificationsModal>} */}
         </UserInfoContainer>
     )
