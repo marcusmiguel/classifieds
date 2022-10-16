@@ -30,7 +30,7 @@ export const Title = styled.span`
     display: flex;
     justify-content: center;
     font-weight: 900;
-    font-size: .9rem;
+    font-size: 1rem;
 `;
 
 export const TheiAdsIcon = styled(IoPeopleOutline)`

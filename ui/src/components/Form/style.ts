@@ -20,8 +20,8 @@ export const FormContainer = styled.div`
 
 export const FormTitle = styled.div`
     width: 100%;
-    font-weight: 900;
-    font-size: .9rem;
+    font-weight: 600;
+    font-size: 1rem;
 `;
 
 export const ErrorMessage = styled.div`
@@ -39,7 +39,7 @@ export const ErrorMessage = styled.div`
 export const Label = styled.label`
     width: 100%;
     margin-bottom: .5em;
-    font-weight: 700;
+    font-weight: 600;
     font-size: .7rem;
     margin-top: 1.2em;
 `;

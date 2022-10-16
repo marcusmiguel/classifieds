@@ -1,16 +1,11 @@
 import React, { useEffect, useState } from "react";
-import api from "../../api";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch } from "../../redux/hooks/hooks";
 import { editAd, publishAd } from "../../redux/slices/classifiedsSlice";
-import { Advertisement } from "../../types";
+import { getAdById } from "../../util";
 import { AddedImage, AddedImageContainer, AddedImagesRow, AddIcon, AddImageButton, AddImageRow, ErrorMessage, FormContainer, FormTitle, Input, Label, RadioInput, RemoveImage, SelectRow, SubmitButton, SubmitIcon, TextArea, UrlInput } from "./style";
 
-interface FormProps {
-  advertisement?: Advertisement,
-  onConfirmFunction?: Function,
-}
-
-interface formValues {
+type formValues = {
   title: string,
   desc: string,
   price: string,
@@ -19,13 +14,19 @@ interface formValues {
   forward: boolean,
 }
 
-export const Form = ({ advertisement, onConfirmFunction }: FormProps) => {
-  const dispatch = useAppDispatch();
+export const Form = () => {
+
+  const { id } = useParams();
+  const advertisement = getAdById(id)
+
   const [formValues, setFormValues] = useState<formValues>({ title: '', desc: '', tags: [], price: '', images: [], forward: true });
   const [formErrors, setFormErrors] = useState({ title: "", });
-
   const [inputUrl, setInputUrl] = useState('');
+
   const [disableAdImages, setDisableAdImages] = useState(false);
+
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const handleSubmitButtonClick = (e) => {
     e.preventDefault();
@@ -57,13 +58,19 @@ export const Form = ({ advertisement, onConfirmFunction }: FormProps) => {
         forward: advertisement.forward == formValues.forward ? null : formValues.forward,
         images: JSON.stringify(advertisement.images) == JSON.stringify(formValues.images) ? null : formValues.images,
       }
-      dispatch(editAd(payload));
 
-      if (onConfirmFunction)
-        onConfirmFunction();
+      let detailsBackground = document.getElementById('detailsBackground');
+      if (detailsBackground) {
+        detailsBackground.style.overflowX = 'hidden';
+        detailsBackground.style.overflowY = 'auto';
+      };
+
+      dispatch(editAd(payload));
+      navigate(-1);
     }
     else {
-      dispatch(publishAd({ formValues: formValues }))
+      dispatch(publishAd({ formValues: formValues }));
+      navigate('/myads');
     }
     setFormValues({ title: '', desc: '', price: '', tags: [], images: [], forward: true });
     setInputUrl('');
@@ -77,7 +84,6 @@ export const Form = ({ advertisement, onConfirmFunction }: FormProps) => {
 
     setFormValues({ ...formValues, [id]: value });
   };
-
 
   const handleUrlChange = (e) => {
     const { value } = e.target;
@@ -102,7 +108,6 @@ export const Form = ({ advertisement, onConfirmFunction }: FormProps) => {
       setDisableAdImages(true);
     };
   }, [formValues.images]);
-
 
   useEffect(() => {
     if (advertisement) {

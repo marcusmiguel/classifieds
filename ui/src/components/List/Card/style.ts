@@ -107,8 +107,8 @@ export const Publisher = styled.span`
 `;
 
 export const Title = styled.div`
-    font-weight: 900;
-    font-size: .8rem;
+    font-weight: 700;
+    font-size: .85rem;
     line-height: 1em;
     height: 100%;
     width: 100%;

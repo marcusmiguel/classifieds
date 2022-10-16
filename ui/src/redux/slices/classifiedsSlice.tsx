@@ -122,8 +122,6 @@ export const loadState = createAsyncThunk('loadAds', async (data, thunkAPI) => {
         event: (data) => receiveFavorites(data),
         quit: () => { }
     })
-
-
 }
 );
 
@@ -165,9 +163,6 @@ export const editAd = createAsyncThunk('editAd', async (data: editAdData, thunkA
 });
 
 export const deleteAd = createAsyncThunk('toggleFavorite', async (data: deleteAdData, thunkAPI) => {
-    // let state = thunkAPI.getState() as RootState;;
-    // thunkAPI.dispatch(setMyAds(state.classifieds.data.myads?.filter(x => x.id != data.id)));
-
     api.poke(
         {
             app: 'classifieds',
@@ -193,7 +188,6 @@ export const toggleFavorite = createAsyncThunk('toggleFavorite', async (data: to
             },
         }
     );
-
 });
 
 export const sendMessage = createAsyncThunk('sendMessage', async (data: sendMessageData, thunkAPI) => {

@@ -2,13 +2,14 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { Advertisement } from "../../types";
+import { LIST_ACTIONS } from "../List/ListReducer";
 import { ActiveListItem, PaginationList, PaginationListItem } from "./style";
 
 interface PaginationProps {
     records: Advertisement[] | null,
     pageLimit: number,
     pageNeighbours: number,
-    onPageChanged: Function,
+    dispatch: React.Dispatch<any>,
 };
 
 const range = (from, to, step = 1) => {
@@ -26,7 +27,7 @@ const range = (from, to, step = 1) => {
 const LEFT_PAGE = 'LEFT';
 const RIGHT_PAGE = 'RIGHT';
 
-export const Pagination = ({ records, pageLimit, pageNeighbours, onPageChanged }: PaginationProps) => {
+export const Pagination = ({ records, pageLimit, pageNeighbours, dispatch }: PaginationProps) => {
 
     const { page } = useParams();
 
@@ -69,7 +70,7 @@ export const Pagination = ({ records, pageLimit, pageNeighbours, onPageChanged }
         }
 
         return range(1, totalPages);
-    }
+    };
 
     const totalPages = records ? Math.ceil(records.length / pageLimit) : 0;
 
@@ -89,14 +90,14 @@ export const Pagination = ({ records, pageLimit, pageNeighbours, onPageChanged }
             totalRecords: records ? records.length : 0
         };
 
-        setCurrentPage(newCurrentPage)
+        setCurrentPage(newCurrentPage);
 
-        if (!window.location.pathname.includes('/myads/0v')) {
+        if (!(window.location.pathname.includes('/myads/0v') || window.location.pathname.includes('/ads/0v'))) {
             let newPath = window.location.pathname.includes('/ads') ? `/apps/classifieds/ads/page/${newCurrentPage}` : `/apps/classifieds/myads/page/${newCurrentPage}`;
             window.history.pushState("", "", newPath);
         }
 
-        onPageChanged(paginationData);
+        dispatch({ type: LIST_ACTIONS.GO_TO_PAGE, payload: paginationData });
     }
 
     const handleClick = page => evt => {

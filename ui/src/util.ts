@@ -1,8 +1,8 @@
 import moment from "moment";
-import { useLocation } from "react-router-dom";
 import { useAppSelector } from "./redux/hooks/hooks";
 
 export const daToDate = da => {
+
     const time = da.slice(1).split(".")!;
     const year = time[0];
     const month = time[1]
@@ -23,10 +23,15 @@ export const getAdById = (id) => {
     }
     let inMyAds = myads?.filter(x => x.id == id);
     return (inMyAds && inMyAds.length > 0) ? inMyAds[0] : null;
-}
+};
 
-export const locationHasPath = (path) => {
-    let location = useLocation();
+export const scrollDetailsToTop = () => {
+    let detailsBackground = document.getElementById("detailsBackground");
+    if (detailsBackground) {
+        detailsBackground.scrollTop = 0;
+    }
+};
 
-    return location.pathname.indexOf(path) > -1;
-}
+export const scrollToTop = () => {
+    document.body.scrollTop = document.documentElement.scrollTop = 0;
+};

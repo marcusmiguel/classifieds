@@ -4,7 +4,6 @@ import api from "../../api"
 import { UserInfoContainer, ShipName, ShipInfo } from "./style"
 
 export const UserInfo = () => {
-
     return (
         <UserInfoContainer>
             {/* <NotificationButton id="notificationBtn" onClick={handleNotificationsButtonClick}>

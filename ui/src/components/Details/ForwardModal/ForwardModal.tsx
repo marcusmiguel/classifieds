@@ -1,6 +1,6 @@
 import { reactRenderer, sigil } from "@tlon/sigil-js";
 import React, { useEffect, useRef, useState } from "react";
-import { Advertisement, Mutual } from "../../types";
+import { Advertisement, Mutual } from "../../../types";
 import { CloseIcon, ForwardModalBox, ForwardModalContainer, MutualInfo, MutualRow, MutualsList, NoResults, SearchBar, SearchContainer, SearchIcon, SendButton, SendIcon, SentButton, SentIcon, Ship, Title, UpperRow } from "./style";
 
 interface ForwardModalProps {
