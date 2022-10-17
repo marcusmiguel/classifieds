@@ -45,8 +45,6 @@ export function App() {
         </Route>
         <Route path="*" element={<></>} />
       </Routes>
-
-
     </BrowserRouter>
   );
 }

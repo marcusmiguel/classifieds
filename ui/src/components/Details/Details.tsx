@@ -31,9 +31,8 @@ export const Details = () => {
         }
     }, [location]);
 
-
     const handleChatButtonClick = () => {
-        if (location.pathname.indexOf('/chat') > -1) {
+        if (location.pathname.includes('/chat')) {
             scrollDetailsToTop();
             navigate(-1);
         }
@@ -96,7 +95,7 @@ export const Details = () => {
         <DetailsBackground id="detailsBackground" >
             <DetailsContainer >
                 <UpperRow>
-                    {location.pathname.indexOf('/ads') > -1 ? 'Ads' : 'My Ads'} <NavigatedIcon /> Details
+                    {location.pathname.includes('/ads') ? 'Ads' : 'My Ads'} <NavigatedIcon /> Details
                     <CloseIcon onClick={() => navigate(-1)} />
                 </UpperRow>
                 {advertisement && <FirstSection>
@@ -151,7 +150,7 @@ export const Details = () => {
                                 </PriceContainer>}
                         </InfoBox>
                         <Actions>
-                            {location.pathname.indexOf('/ads') > -1 ?
+                            {location.pathname.includes('/ads') ?
                                 <>
                                     <FavoriteButton advertisement={advertisement} />
                                     {/* <ForwardButton onClick={() => setDisplayForwardModal(true)}>

@@ -13,8 +13,8 @@ export const DetailsImages = ({ images }: DetailsImagesProps) => {
 
     useEffect(() => {
         const handleKeyDown = (e) => {
-            if (!((location.pathname.indexOf('/edit') > -1)
-                || (location.pathname.indexOf('/delete') > -1)
+            if (!((location.pathname.includes('/edit'))
+                || (location.pathname.includes('/delete'))
             )) {
                 if (e.key == 'ArrowLeft') {
                     handleLeftArrowClick();

@@ -30,12 +30,11 @@ export const List = ({ listAds }: ListProps) => {
         <>
             <ListContainer>
                 <Title>
-                    {location.pathname.indexOf('/ads') > -1 ? 'Ads' :
+                    {location.pathname.includes('/ads') ? 'Ads' :
                         'My Ads'}
                 </Title>
-                {location.pathname.indexOf('/ads') > -1 &&
+                {location.pathname.includes('/ads') &&
                     <FilterRowContainer>
-
                         <SearchBar dispatch={dispatch}></SearchBar>
                         <Dropdown dispatch={dispatch}></Dropdown>
                         {/*  <Tags><Tag className="active">Electronics</Tag><Tag>Books</Tag><Tag>TagThree</Tag><Tag>TagFour</Tag>
@@ -61,8 +60,6 @@ export const List = ({ listAds }: ListProps) => {
         </>
     );
 };
-
-
     // const [forwardedAds, setForwardedAds] = useState<Advertisement[]>([]);
     // const [displayNotifications, setDisplayNotifications] = useState(false);
     // let hardcodedNotifications: Notification[] = [];
