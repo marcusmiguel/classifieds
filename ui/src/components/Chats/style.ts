@@ -1,18 +1,22 @@
-import { RiSendPlane2Line } from 'react-icons/ri';
 import styled from 'styled-components';
 
 export const ChatContainer = styled.div`
     padding: 1.5em 1.5em;
     margin-left: 16%;
-    // width: 100%;
-    // height: 100%;
+    width: 84%;
     background: rgba(253,253,253,1);
+
+    @media (max-width: 1150px) {
+        margin: 3em 0 0 0;
+        padding: 1.5em 3%;
+        width: 100%;
+    };
 `;
 
 export const ChatTitle = styled.div`
-    font-weight: 900;
+    font-weight: 600;
     margin-bottom: 1em;
-    font-size: .9rem;
+    font-size: 1rem;
 `;
 
 export const ChatSection = styled.div`
@@ -23,9 +27,17 @@ export const ChatSection = styled.div`
 `;
 
 export const ChatList = styled.div`
-    width: 17rem;
+    width: 40%;
     height: 100%;
+
+    @media (max-width: 1050px) {
+        width: 43%;
+    }
+    @media (max-width: 750px) {
+        width: 100%;
+    }
 `;
+
 interface ChatCardProps {
     isActive: boolean,
 }
@@ -39,7 +51,7 @@ export const ChatCard = styled.div<ChatCardProps>`
     box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px; 
     margin-bottom: 1em;
     cursor: pointer;
-    padding: 1em 1em;
+    padding: 1em;
     background: white;
     position: relative;
     border: ${p => p.isActive ? '1px solid rgba(0, 0, 0, 1)' : 'none'};
@@ -50,20 +62,10 @@ export const ChatCard = styled.div<ChatCardProps>`
 
 `;
 
-export const Conversation = styled.div`
-    border-radius: .5em;
-    width: 43%; 
-    box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px 0px;
-    height: 21rem;
-    position: fixed;
-    margin-left: 36%;
-    background: white;
-`;
-
 export const CardUpperRow = styled.div`
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
 `;
 
 export const CardDate = styled.div`
@@ -71,9 +73,9 @@ export const CardDate = styled.div`
     color: rgba(0, 0, 0, .5);
     text-align: end;
     line-height: 1;
-    position: absolute;
-    top: 1rem;
-    right: .7rem;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 `;
 
 export const MessagePreview = styled.div`
@@ -82,7 +84,6 @@ export const MessagePreview = styled.div`
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
-    padding: 0 1.1rem;
     color: rgba(0, 0, 0, .6);
 `;
 
@@ -92,165 +93,26 @@ export const CardReceiver = styled.div`
 `;
 
 export const CardSigil = styled.span`
-    position: absolute;
-    top: 1rem;
-    left: .7rem;
+    margin-top: -.02em;
 `;
 
 export const CardReceiverShip = styled.div`
-    font-size: .8rem;
+    font-size: .7rem;
     color:  rgba(0, 0, 0, .7);
     line-height: 1;
-    padding-left: 1.1rem;
-`;
-
-export const ConversationUpperRow = styled.div`
-    display: flex;
-    flex-direction: column; 
-    align-items: center;
-    justify-content: center;
-    height: 15%;
-    
-`;
-
-export const ConversationBottomRow = styled.div`
-    height: 15%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-`;
-
-export const ConversationReceiver = styled.div`
-    display: flex;
-    align-items: center;
-    height: 1rem;
-    font-size: .7rem;
-`;
-
-export const ConversationReceiverShip = styled.div`
-    margin-left: .5em;
-`;
-
-export const MessageList = styled.div`
-    height: 15rem;
-    display: flex;
-    flex-direction: column;
-    border-bottom: 1px solid rgba(0, 0, 0, .1);
-    border-top: 1px solid rgba(0, 0, 0, .1);
-    padding: 1em .75em;
-    height: 70%;
-    overflow-y: auto;
-    overflow-x: hidden;
-
-    `;
-
-export const SentMessage = styled.div`
-    border: 1px solid rgba(0, 0, 0, .2);
-    border-radius: .25rem;
-    max-width: 60%;
-    align-self: end;
-    padding: .5em 1em;
-    margin-bottom: .5rem;
-    background: rgba(0, 0, 0, .015);
-    line-height: 1;
-
-    &:last-child{
-        margin-bottom: 0em;
-    }
-`;
-
-export const SigilContainer = styled.div`
-    margin-right: .3em;
-    padding-top: .3em;
-`;
-
-export const ReceivedMessage = styled.div`
-    align-self: start;
-    margin-bottom: .5rem;
-    display: flex;
-    max-width: 60%;
-    line-height: 1;
-
-    &:last-child{
-        margin-bottom: 0;
-    }
-`;
-
-export const ReceivedMessageBox = styled.div`
-    display: flex;
-    flex-direction: column;
-    font-size: .7rem;
-    margin-bottom: .3em;
-    border: 1px solid rgba(0, 0, 0, .2);
-    border-radius: .25rem;
-    background: rgba(0, 0, 0, .015);
-    padding: .5em 1em;
-`;
-
-export const MessageShip = styled.div`  
-    margin-left: .3rem;
-`;
-
-export const MessageText = styled.div`
-    display: flex;
-    font-size: .65rem;
-    line-height: 1;
-    margin-bottom: .3em;
-    word-break: break-all;
-`;
-
-export const MessageDate = styled.div`
-    font-size: .6rem;
-    display: flex;
-    justify-content: end;
-    color: rgba(0, 0, 0, .5);
+    padding: 0 1rem 0 .2em;
     white-space: nowrap;
-`;
-
-export const InputRow = styled.div`
-    height: 3rem;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    position: relative;
-    padding: 0 1em; 
-`;
-
-export const Input = styled.input`
-    width: 100%;
-    border: 1px solid rgba(0, 0, 0, .2);
-    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
-    border-radius: .25rem;
-    padding: .3em 2em .3em 1em;
-    font-size: .65rem;
-`;
-
-export const SendIcon = styled(RiSendPlane2Line)`
-    position: absolute;
-    right: 2em;
-    cursor: pointer;
-    font-size:.8rem;
+    text-overflow: ellipsis;
+    overflow: hidden;
 `;
 
 export const CardAdTitle = styled.div`
-    font-size: .7rem;
-    padding: 0 1.1rem;
+    font-size: .75rem;
     font-weight: 700;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
-    margin-bottom: .5em;
-`;
-
-export const ConversationAdTitle = styled.div`
-    font-size: .7rem;
-    font-weight: 900;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-    width: 100%;
-    padding: 0 1em;
-    text-align: center;
+    margin-bottom:.3em;
 `;
 
 export const EmptyListMessage = styled.div`

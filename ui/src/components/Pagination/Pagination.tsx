@@ -1,13 +1,15 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
+import { useParams } from "react-router-dom";
 import { Advertisement } from "../../types";
+import { LIST_ACTIONS } from "../List/ListReducer";
 import { ActiveListItem, PaginationList, PaginationListItem } from "./style";
 
 interface PaginationProps {
     records: Advertisement[] | null,
     pageLimit: number,
     pageNeighbours: number,
-    onPageChanged: Function,
+    dispatch: React.Dispatch<any>,
 };
 
 const range = (from, to, step = 1) => {
@@ -25,11 +27,11 @@ const range = (from, to, step = 1) => {
 const LEFT_PAGE = 'LEFT';
 const RIGHT_PAGE = 'RIGHT';
 
-export const Pagination = ({ records, pageLimit, pageNeighbours, onPageChanged }: PaginationProps) => {
+export const Pagination = ({ records, pageLimit, pageNeighbours, dispatch }: PaginationProps) => {
 
-    if (records == null) return <></>;
+    const { page } = useParams();
 
-    const [currentPage, setCurrentPage] = useState(1);
+    const [currentPage, setCurrentPage] = useState((page && (+page > 0)) ? +page : 1);
 
     const fetchPageNumbers = () => {
         const totalNumbers = (pageNeighbours * 2) + 3;
@@ -68,26 +70,34 @@ export const Pagination = ({ records, pageLimit, pageNeighbours, onPageChanged }
         }
 
         return range(1, totalPages);
-    }
+    };
 
-    const totalPages = Math.ceil(records.length / pageLimit!);
+    const totalPages = records ? Math.ceil(records.length / pageLimit) : 0;
 
     const pages = fetchPageNumbers();
 
     useEffect(() => {
-        gotoPage(1);
+        gotoPage(currentPage);
     }, [records]);
 
-    const gotoPage = page => {
-        const newCurrentPage = Math.max(0, Math.min(page, totalPages));
+    const gotoPage = pageToGo => {
+        const newCurrentPage = Math.max(1, Math.min(pageToGo, totalPages));
+
         const paginationData = {
             newCurrentPage,
             newTotalPages: totalPages,
             newPageLimit: pageLimit,
-            totalRecords: records.length
+            totalRecords: records ? records.length : 0
         };
+
         setCurrentPage(newCurrentPage);
-        onPageChanged(paginationData);
+
+        if (!(window.location.pathname.includes('/myads/0v') || window.location.pathname.includes('/ads/0v'))) {
+            let newPath = window.location.pathname.includes('/ads') ? `/apps/classifieds/ads/page/${newCurrentPage}` : `/apps/classifieds/myads/page/${newCurrentPage}`;
+            window.history.pushState("", "", newPath);
+        }
+
+        dispatch({ type: LIST_ACTIONS.GO_TO_PAGE, payload: paginationData });
     }
 
     const handleClick = page => evt => {

@@ -2,7 +2,7 @@
   title+'classifieds'
   info+'A peer-to-peer marketplace.'
   color+0x2e.4347
-  version+[0 0 1]
+  version+[0 0 2]
   website+''
   license+''
   base+'classifieds'
