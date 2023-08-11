@@ -10,12 +10,12 @@ Also see the [Desk and Glob](https://developers.urbit.org/guides/core/app-school
 ### Install the agent
 On your Urbit ship, create and mount a desk for `%classifieds`:
 ```
-|merge %classifieds our %webterm
+|merge %classifieds our %garden
 |mount %classifieds
 ```
 Go back to Unix and copy the files from the `desk/` folder into the desk of your pier:
 ```shell
-cp -r classifieds/desk/* path_to_your_urbit_pier/classifieds
+cp -r path_to_this_repo/desk/* path_to_your_urbit_pier/classifieds
 ```
 Back on your ship, commit the files and install the agent:
 ```
@@ -23,7 +23,7 @@ Back on your ship, commit the files and install the agent:
 |install our %classifieds
 ```
 ### Deploy the frontend
-Inside the `ui/` directory, run
+Inside the `ui/` directory of this repo, run
 ```shell
 npm install
 npm run build
