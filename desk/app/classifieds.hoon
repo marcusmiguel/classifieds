@@ -17,7 +17,7 @@
 =|  state-0
 =*  state  -
 %-  %+  agent:gossip
-      [2 %mutuals %mutuals]
+      [2 %mutuals %mutuals %.n]
     %-  malt
     ^-  (list [mark $-(* vase)])  
     :~  [%classifieds-advertisement |=(n=* !>((grab-ad n)))]
